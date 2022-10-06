@@ -1,14 +1,12 @@
 port module Main exposing (main)
 
--- import Ansi.Border
-
 import Ansi
-import Ansi.Border
 import Ansi.Color exposing (Location(..))
 import Ansi.Cursor
 import Ansi.Font
 import Regex exposing (Regex)
 import Terminal exposing (Element)
+import Terminal.Border
 import Terminal.Text
 
 
@@ -70,7 +68,7 @@ render model =
       -- GENERIC
       -- , [ Ansi.clearScreen
       --   , Ansi.Cursor.moveTo { row = 4, column = 1 }
-      --   , Ansi.Border.draw { width = 40, height = 4 } Ansi.Border.single
+      --   , Terminal.Border.draw { width = 40, height = 4 } Terminal.Border.single
       --   , Ansi.Cursor.moveTo { row = 6, column = 2 }
       --   , Ansi.Font.resetAll
       --   , "Hello, "

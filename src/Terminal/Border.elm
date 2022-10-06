@@ -1,4 +1,4 @@
-module Ansi.Border exposing
+module Terminal.Border exposing
     ( single
     , double
     , bold, classic, custom, doubleSingle, draw, rounded, singleDouble
