@@ -1,0 +1,22 @@
+{
+  "name": "elm-ansi",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "",
+  "scripts": {
+    "dev": "nodemon --exec 'elm-esm make src/Main.elm --output=dist/elm.js' --watch src -e elm"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wolfadex/elm-ansi.git"
+  },
+  "author": "Wolfgang Schuster",
+  "bugs": {
+    "url": "https://github.com/wolfadex/elm-ansi/issues"
+  },
+  "homepage": "https://github.com/wolfadex/elm-ansi#readme",
+  "devDependencies": {
+    "elm-esm": "^1.1.4",
+    "nodemon": "^2.0.19"
+  }
+}
