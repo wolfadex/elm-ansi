@@ -3,8 +3,10 @@ module Ink exposing (..)
 import Ansi
 import Ansi.Cursor
 import Ansi.Font
+import Ansi.String
 import Ink.Internal exposing (Attribute(..), Element(..), Layout(..))
 import List.Extra
+import Terminal.Border exposing (Border)
 
 
 type alias Element =
@@ -43,17 +45,67 @@ viewHelper element =
     case element of
         ElText attributes content ->
             let
-                ( before, after, layout ) =
+                splitAttrs =
                     splitAttributes attributes
             in
-            before ++ content ++ after
+            splitAttrs.before
+                ++ content
+                ++ splitAttrs.after
 
         ElContainer attributes children ->
             let
-                ( before, after, layout ) =
+                attrs =
                     splitAttributes attributes
+
+                hasBorder =
+                    attrs.border /= Nothing
+
+                renderedChildren =
+                    String.join (spacers attrs.layouts)
+                        (List.map
+                            (\child ->
+                                (if hasBorder then
+                                    " "
+
+                                 else
+                                    ""
+                                )
+                                    ++ viewHelper child
+                            )
+                            children
+                        )
+
+                lines =
+                    String.split "\n" renderedChildren
+
+                widestLine =
+                    List.foldl
+                        (\line widest ->
+                            let
+                                w =
+                                    Ansi.String.width line
+                            in
+                            if w > widest then
+                                w
+
+                            else
+                                widest
+                        )
+                        0
+                        lines
             in
-            before ++ String.join (spacers layout) (List.map viewHelper children) ++ after
+            (attrs.before ++ renderedChildren ++ attrs.after)
+                |> applyBorder attrs.border widestLine (List.length lines)
+
+
+applyBorder : Maybe Border -> Int -> Int -> String -> String
+applyBorder maybeBorder width height content =
+    case maybeBorder of
+        Nothing ->
+            content
+
+        Just bor ->
+            Terminal.Border.draw { width = width + 1, height = height + 2 } bor ++ "\n" ++ content ++ "\n"
 
 
 spacers : List Layout -> String
@@ -105,22 +157,39 @@ spacers styles =
         symbol
 
 
-splitAttributes : List Attribute -> ( String, String, List Layout )
+splitAttributes : List Attribute -> { before : String, after : String, layouts : List Layout, border : Maybe Border }
 splitAttributes attributes =
     List.foldr
-        (\attr ( bs, as_, lay ) ->
+        (\attr parts ->
             case attr of
                 Style b a ->
-                    ( b :: bs, a :: as_, lay )
+                    { parts
+                        | before = b :: parts.before
+                        , after = a :: parts.after
+                    }
 
                 Layout l ->
-                    ( bs, as_, l :: lay )
+                    { parts | layouts = l :: parts.layouts }
+
+                StyleBorder bor ->
+                    { parts | border = Just bor }
         )
-        ( [], [], [] )
+        { before = [], after = [], layouts = [], border = Nothing }
         attributes
-        |> (\( a, b, l ) -> ( String.concat a, String.concat b, List.reverse l ))
+        |> (\parts ->
+                { before = String.concat parts.before
+                , after = String.concat parts.after
+                , layouts = List.reverse parts.layouts
+                , border = parts.border
+                }
+           )
 
 
 spacing : Int -> Attribute
 spacing dist =
     Layout (Spacing dist)
+
+
+border : Border -> Attribute
+border borderStyle =
+    StyleBorder borderStyle

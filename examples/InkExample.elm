@@ -75,7 +75,10 @@ render model =
         titleWidth =
             Ansi.String.width (Ink.view title)
       in
-      Ink.column [ Ink.spacing 1 ]
+      Ink.column
+        [ Ink.spacing 1
+        , Ink.border Terminal.Border.single
+        ]
         (Ink.column []
             [ Ink.row [ Ink.spacing 1 ]
                 [ Ink.text [] "🌈  Welcome to Elm Land!"
@@ -98,7 +101,10 @@ render model =
 
 subcommandList : List Element
 subcommandList =
-    [ Ink.column [ Ink.spacing 1 ]
+    [ Ink.column
+        [ Ink.spacing 1
+        , Ink.border Terminal.Border.double
+        ]
         [ Ink.text [] "    Here are the available commands:"
         , Ink.column []
             [ elmLandCommand "✨" "init <folder-name>" "...... create a new project"
@@ -115,7 +121,7 @@ subcommandList =
 elmLandCommand : String -> String -> String -> Element
 elmLandCommand emoji cmd desc =
     Ink.row [ Ink.spacing 1 ]
-        [ Ink.text [] ("    " ++ emoji ++ " elm-land")
+        [ Ink.text [] ("   " ++ emoji ++ " elm-land")
         , Ink.text [ Ink.Text.color pink ] cmd
         , Ink.text [] desc
         ]

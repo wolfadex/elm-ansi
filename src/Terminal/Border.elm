@@ -1,7 +1,7 @@
 module Terminal.Border exposing
     ( single
     , double
-    , bold, classic, custom, doubleSingle, draw, rounded, singleDouble
+    , Border, bold, classic, custom, doubleSingle, draw, rounded, singleDouble
     )
 
 {-| Styles borrowed from <https://www.npmjs.com/package/cli-boxes>
@@ -14,16 +14,17 @@ module Terminal.Border exposing
 import Ansi.Cursor
 
 
-type alias Border =
-    { topLeft : String
-    , top : String
-    , topRight : String
-    , right : String
-    , bottomRight : String
-    , bottom : String
-    , bottomLeft : String
-    , left : String
-    }
+type Border
+    = Border
+        { topLeft : String
+        , top : String
+        , topRight : String
+        , right : String
+        , bottomRight : String
+        , bottom : String
+        , bottomLeft : String
+        , left : String
+        }
 
 
 {-| A thin box with sharp corners
@@ -35,15 +36,16 @@ type alias Border =
 -}
 single : Border
 single =
-    { topLeft = "┌"
-    , top = "─"
-    , topRight = "┐"
-    , right = "│"
-    , bottomRight = "┘"
-    , bottom = "─"
-    , bottomLeft = "└"
-    , left = "│"
-    }
+    Border
+        { topLeft = "┌"
+        , top = "─"
+        , topRight = "┐"
+        , right = "│"
+        , bottomRight = "┘"
+        , bottom = "─"
+        , bottomLeft = "└"
+        , left = "│"
+        }
 
 
 {-| 2 thin, nested boxes with sharp corners
@@ -55,15 +57,16 @@ single =
 -}
 double : Border
 double =
-    { topLeft = "╔"
-    , top = "═"
-    , topRight = "╗"
-    , right = "║"
-    , bottomRight = "╝"
-    , bottom = "═"
-    , bottomLeft = "╚"
-    , left = "║"
-    }
+    Border
+        { topLeft = "╔"
+        , top = "═"
+        , topRight = "╗"
+        , right = "║"
+        , bottomRight = "╝"
+        , bottom = "═"
+        , bottomLeft = "╚"
+        , left = "║"
+        }
 
 
 {-| A thin box with rounded corners
@@ -75,15 +78,16 @@ double =
 -}
 rounded : Border
 rounded =
-    { topLeft = "╭"
-    , top = "─"
-    , topRight = "╮"
-    , right = "│"
-    , bottomRight = "╯"
-    , bottom = "─"
-    , bottomLeft = "╰"
-    , left = "│"
-    }
+    Border
+        { topLeft = "╭"
+        , top = "─"
+        , topRight = "╮"
+        , right = "│"
+        , bottomRight = "╯"
+        , bottom = "─"
+        , bottomLeft = "╰"
+        , left = "│"
+        }
 
 
 {-| A thick box with sharp corners
@@ -95,15 +99,16 @@ rounded =
 -}
 bold : Border
 bold =
-    { topLeft = "┏"
-    , top = "━"
-    , topRight = "┓"
-    , right = "┃"
-    , bottomRight = "┛"
-    , bottom = "━"
-    , bottomLeft = "┗"
-    , left = "┃"
-    }
+    Border
+        { topLeft = "┏"
+        , top = "━"
+        , topRight = "┓"
+        , right = "┃"
+        , bottomRight = "┛"
+        , bottom = "━"
+        , bottomLeft = "┗"
+        , left = "┃"
+        }
 
 
 {-| A box with sharp corners, thin on the top and bottom and doubled up on the sides
@@ -115,15 +120,16 @@ bold =
 -}
 singleDouble : Border
 singleDouble =
-    { topLeft = "╓"
-    , top = "─"
-    , topRight = "╖"
-    , right = "║"
-    , bottomRight = "╜"
-    , bottom = "─"
-    , bottomLeft = "╙"
-    , left = "║"
-    }
+    Border
+        { topLeft = "╓"
+        , top = "─"
+        , topRight = "╖"
+        , right = "║"
+        , bottomRight = "╜"
+        , bottom = "─"
+        , bottomLeft = "╙"
+        , left = "║"
+        }
 
 
 {-| A box with sharp corners, thin on the sides and doubled on top and bottom
@@ -135,15 +141,16 @@ singleDouble =
 -}
 doubleSingle : Border
 doubleSingle =
-    { topLeft = "╒"
-    , top = "═"
-    , topRight = "╕"
-    , right = "│"
-    , bottomRight = "╛"
-    , bottom = "═"
-    , bottomLeft = "╘"
-    , left = "│"
-    }
+    Border
+        { topLeft = "╒"
+        , top = "═"
+        , topRight = "╕"
+        , right = "│"
+        , bottomRight = "╛"
+        , bottom = "═"
+        , bottomLeft = "╘"
+        , left = "│"
+        }
 
 
 {-| A thin box with plus shaped corners
@@ -155,15 +162,16 @@ doubleSingle =
 -}
 classic : Border
 classic =
-    { topLeft = "+"
-    , top = "-"
-    , topRight = "+"
-    , right = "|"
-    , bottomRight = "+"
-    , bottom = "-"
-    , bottomLeft = "+"
-    , left = "|"
-    }
+    Border
+        { topLeft = "+"
+        , top = "-"
+        , topRight = "+"
+        , right = "|"
+        , bottomRight = "+"
+        , bottom = "-"
+        , bottomLeft = "+"
+        , left = "|"
+        }
 
 
 {-| Design your own box, suash as
@@ -187,19 +195,20 @@ custom :
     }
     -> Border
 custom options =
-    { topLeft = String.fromChar options.topLeft
-    , top = String.fromChar options.top
-    , topRight = String.fromChar options.topRight
-    , right = String.fromChar options.right
-    , bottomRight = String.fromChar options.bottomRight
-    , bottom = String.fromChar options.bottom
-    , bottomLeft = String.fromChar options.bottomLeft
-    , left = String.fromChar options.left
-    }
+    Border
+        { topLeft = String.fromChar options.topLeft
+        , top = String.fromChar options.top
+        , topRight = String.fromChar options.topRight
+        , right = String.fromChar options.right
+        , bottomRight = String.fromChar options.bottomRight
+        , bottom = String.fromChar options.bottom
+        , bottomLeft = String.fromChar options.bottomLeft
+        , left = String.fromChar options.left
+        }
 
 
 draw : { width : Int, height : Int } -> Border -> String
-draw dimensions style =
+draw dimensions (Border style) =
     [ style.topLeft
     , List.repeat (dimensions.width - 2) style.top |> String.concat
     , style.topRight

@@ -1,9 +1,12 @@
 module Ink.Internal exposing (..)
 
+import Terminal.Border exposing (Border)
+
 
 type Attribute
     = Style String String
     | Layout Layout
+    | StyleBorder Border
 
 
 type Layout
