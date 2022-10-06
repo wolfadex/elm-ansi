@@ -4,6 +4,7 @@ import Ansi
 import Ansi.Color exposing (Location(..))
 import Ansi.Cursor
 import Ansi.Font
+import Ansi.String
 import Regex exposing (Regex)
 import Terminal exposing (Element)
 import Terminal.Border
@@ -97,22 +98,30 @@ render model =
       --     |> String.join "\n"
       --     |> stdout
       -- elm-land, with functions
-    , Terminal.column [ Terminal.spacing 1 ]
+    , let
+        title =
+            Terminal.row [ Terminal.spacing 1 ]
+                [ Terminal.text [] "Welcome to Elm Land!"
+                , Terminal.text [ Terminal.Text.faint ] "1.2.3"
+                ]
+
+        titleWidth =
+            Ansi.String.width (Terminal.view title)
+      in
+      Terminal.column [ Terminal.spacing 1 ]
         (Terminal.column []
             [ Terminal.row [ Terminal.spacing 1 ]
                 [ Terminal.text [] "🌈  Welcome to Elm Land!"
                 , Terminal.text [ Terminal.Text.faint ] "1.2.3"
                 ]
             , Terminal.text [ Terminal.Text.color Ansi.Color.green ]
-                ("    " ++ String.repeat (24 + 3) "⎺")
+                ("    " ++ String.repeat titleWidth "⎺")
             ]
             :: subcommandList
             ++ [ Terminal.row [ Terminal.spacing 1 ]
                     [ Terminal.text [] "    Want to learn more? Visit"
                     , Terminal.text [ Terminal.Text.color Ansi.Color.cyan ] "https://elm.land/guide"
                     ]
-               , Terminal.text [] "👩🏽\u{200D}🔧"
-               , Terminal.text [] "😀"
                ]
         )
         |> Terminal.view
