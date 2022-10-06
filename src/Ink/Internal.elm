@@ -1,4 +1,4 @@
-module Terminal.Internal exposing (..)
+module Ink.Internal exposing (..)
 
 
 type Attribute

@@ -1,5 +1,5 @@
 import * as elmAnsi from "./elm-ansi.js";
-import { Elm } from "./elm.js";
+import { Elm } from "./example-elm-ink.js";
 
 let app;
 
@@ -11,7 +11,7 @@ const initialState = elmAnsi.init(function (data) {
   app.ports.stdin.send(data);
 });
 
-app = Elm.Main.init({
+app = Elm.InkExample.init({
   flags: Date.now(),
 });
 

@@ -1,126 +1,59 @@
 module Terminal exposing (..)
 
 import Ansi
-import Ansi.Cursor
+import Ansi.Color exposing (Color, Location(..))
 import Ansi.Font
-import List.Extra
-import Terminal.Internal exposing (Attribute(..), Element(..), Layout(..))
 
 
-type alias Element =
-    Terminal.Internal.Element
+bold : String -> String
+bold str =
+    Ansi.Font.bold ++ str ++ Ansi.Font.resetBoldFaint
 
 
-type alias Attribute =
-    Terminal.Internal.Attribute
+faint : String -> String
+faint str =
+    Ansi.Font.faint ++ str ++ Ansi.Font.resetBoldFaint
 
 
-text : List Attribute -> String -> Element
-text =
-    ElText
+italic : String -> String
+italic str =
+    Ansi.Font.italic ++ str ++ Ansi.Font.resetItalic
 
 
-column : List Attribute -> List Element -> Element
-column attrs =
-    ElContainer (Layout Column :: attrs)
+underline : String -> String
+underline str =
+    Ansi.Font.underline ++ str ++ Ansi.Font.resetUnderline
 
 
-row : List Attribute -> List Element -> Element
-row attrs =
-    ElContainer (Layout Row :: attrs)
+invert : String -> String
+invert str =
+    Ansi.Font.invert ++ str ++ Ansi.Font.resetInvert
 
 
-view : Element -> String
-view element =
-    Ansi.Font.resetAll
-        ++ Ansi.clearScreen
-        ++ Ansi.Cursor.moveTo { row = 0, column = 0 }
-        ++ viewHelper element
+strikeThrough : String -> String
+strikeThrough str =
+    Ansi.Font.strikeThrough ++ str ++ Ansi.Font.resetStrikeThrough
 
 
-viewHelper : Element -> String
-viewHelper element =
-    case element of
-        ElText attributes content ->
-            let
-                ( before, after, layout ) =
-                    splitAttributes attributes
-            in
-            before ++ content ++ after
-
-        ElContainer attributes children ->
-            let
-                ( before, after, layout ) =
-                    splitAttributes attributes
-            in
-            before ++ String.join (spacers layout) (List.map viewHelper children) ++ after
+{-| Resets all font settings on the passed in value
+-}
+resetFont : String -> String
+resetFont str =
+    Ansi.Font.resetAll ++ str
 
 
-spacers : List Layout -> String
-spacers styles =
-    let
-        amount =
-            case
-                List.Extra.get
-                    (\style ->
-                        case style of
-                            Spacing d ->
-                                Just d
-
-                            _ ->
-                                Nothing
-                    )
-                    styles
-            of
-                Nothing ->
-                    0
-
-                Just dist ->
-                    dist
-
-        ( symbol, additionalAmount ) =
-            case
-                List.Extra.get
-                    (\style ->
-                        case style of
-                            Column ->
-                                Just ( "\n", 1 )
-
-                            Row ->
-                                Just ( " ", 0 )
-
-                            _ ->
-                                Nothing
-                    )
-                    styles
-            of
-                Nothing ->
-                    ( " ", 0 )
-
-                Just char ->
-                    char
-    in
-    String.repeat
-        (amount + additionalAmount)
-        symbol
+color : Color -> String -> String
+color c str =
+    Ansi.Font.color c ++ str ++ Ansi.Color.reset Foreground
 
 
-splitAttributes : List Attribute -> ( String, String, List Layout )
-splitAttributes attributes =
-    List.foldr
-        (\attr ( bs, as_, lay ) ->
-            case attr of
-                Style b a ->
-                    ( b :: bs, a :: as_, lay )
-
-                Layout l ->
-                    ( bs, as_, l :: lay )
-        )
-        ( [], [], [] )
-        attributes
-        |> (\( a, b, l ) -> ( String.concat a, String.concat b, List.reverse l ))
+backgroundColor : Color -> String -> String
+backgroundColor c str =
+    Ansi.backgroundColor c ++ str ++ Ansi.Color.reset Background
 
 
-spacing : Int -> Attribute
-spacing dist =
-    Layout (Spacing dist)
+{-| Not supported by some terminals
+-}
+blink : String -> String
+blink str =
+    Ansi.Font.blink ++ str ++ Ansi.Font.resetBlink

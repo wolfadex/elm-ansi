@@ -1,10 +1,10 @@
-module Terminal.Text exposing (..)
+module Ink.Text exposing (..)
 
 import Ansi.Color exposing (Color, Location(..))
 import Ansi.Font
 import Ansi.Internal
 import Browser exposing (UrlRequest(..))
-import Terminal.Internal exposing (Attribute(..))
+import Ink.Internal exposing (Attribute(..))
 
 
 color : Color -> Attribute

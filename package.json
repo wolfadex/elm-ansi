@@ -4,7 +4,9 @@
   "version": "0.1.0",
   "description": "",
   "scripts": {
-    "dev": "nodemon --exec 'elm-esm make src/Main.elm --output=dist/elm.js' --watch src -e elm"
+    "example:ansi": "nodemon --exec 'elm-esm make examples/AnsiExample.elm --output=dist/example-elm-ansi.js' --watch src --watch examples -e elm",
+    "example:terminal": "nodemon --exec 'elm-esm make examples/TerminalExample.elm --output=dist/example-elm-terminal.js' --watch src --watch examples -e elm",
+    "example:ink": "nodemon --exec 'elm-esm make examples/InkExample.elm --output=dist/example-elm-ink.js' --watch src --watch examples -e elm"
   },
   "repository": {
     "type": "git",
