@@ -80,17 +80,7 @@ viewHelper element =
 
                 widestLine =
                     List.foldl
-                        (\line widest ->
-                            let
-                                w =
-                                    Ansi.String.width line
-                            in
-                            if w > widest then
-                                w
-
-                            else
-                                widest
-                        )
+                        (\line widest -> max (Ansi.String.width line) widest)
                         0
                         lines
             in
