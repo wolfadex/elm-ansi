@@ -6,7 +6,7 @@ import Ansi.Font
 import Ansi.String
 import Ink.Internal exposing (Attribute(..), Element(..), Layout(..))
 import List.Extra
-import Terminal.Border exposing (Border)
+import Terminal.Box exposing (Box)
 
 
 type alias Element =
@@ -109,7 +109,7 @@ applyPadding maybePadding content =
                 |> String.join "\n"
 
 
-applyBorder : Maybe Border -> String -> String
+applyBorder : Maybe Box -> String -> String
 applyBorder maybeBorder content =
     case maybeBorder of
         Nothing ->
@@ -117,20 +117,30 @@ applyBorder maybeBorder content =
 
         Just bor ->
             let
-                lines : List String
-                lines =
-                    String.split "\n" (Ansi.String.strip content)
+                widest : Int
+                widest =
+                    widestLine content
             in
-            Ansi.Cursor.savePosition
+            bor.topLeft
+                ++ String.repeat widest bor.top
+                ++ bor.topRight
                 ++ "\n"
-                ++ content
+                ++ (content
+                        |> String.split "\n"
+                        |> List.map
+                            (\line ->
+                                let
+                                    len =
+                                        Ansi.String.width line
+                                in
+                                bor.left ++ line ++ String.repeat (widest - len) " " ++ bor.right
+                            )
+                        |> String.join "\n"
+                   )
                 ++ "\n"
-                ++ Ansi.Cursor.restorePosition
-                ++ Terminal.Border.draw
-                    { width = widestLine content + 1
-                    , height = List.length lines + 2
-                    }
-                    bor
+                ++ bor.bottomLeft
+                ++ String.repeat widest bor.bottom
+                ++ bor.bottomRight
 
 
 widestLine : String -> Int
@@ -195,7 +205,7 @@ type alias Attrs =
     { before : String
     , after : String
     , layouts : List Layout
-    , border : Maybe Border
+    , border : Maybe Box
     , padding : Maybe { top : Int, bottom : Int, left : Int, right : Int }
     }
 
@@ -204,7 +214,7 @@ defaultAttrs :
     { before : List String
     , after : List String
     , layouts : List Layout
-    , border : Maybe Border
+    , border : Maybe Box
     , padding : Maybe { top : Int, bottom : Int, left : Int, right : Int }
     }
 defaultAttrs =
@@ -253,7 +263,7 @@ spacing dist =
     Layout (Spacing dist)
 
 
-border : Border -> Attribute
+border : Box -> Attribute
 border borderStyle =
     StyleBorder borderStyle
 

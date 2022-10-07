@@ -4,9 +4,7 @@ import Ansi
 import Ansi.Color exposing (Location(..))
 import Ansi.Cursor
 import Ansi.Font
-import Ansi.String
 import Terminal
-import Terminal.Border
 
 
 main : Program Int Model Msg

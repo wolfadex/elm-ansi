@@ -1,13 +1,10 @@
 port module InkExample exposing (main)
 
-import Ansi
 import Ansi.Color exposing (Location(..))
-import Ansi.Cursor
-import Ansi.Font
 import Ansi.String
 import Ink exposing (Element)
 import Ink.Text
-import Terminal.Border
+import Terminal.Box
 
 
 main : Program Int Model Msg
@@ -79,7 +76,7 @@ render model =
             Ansi.String.width "🌈  "
       in
       Ink.column
-        [-- Ink.border Terminal.Border.single
+        [ Ink.border Terminal.Box.single
         ]
         (Ink.column []
             [ Ink.row [ Ink.spacing 1 ]
@@ -117,8 +114,7 @@ subcommandList leftPadding =
     [ Ink.column
         [ Ink.spacing 1
         , Ink.paddingEach { top = 0, bottom = 0, left = leftPadding, right = 0 }
-
-        -- , Ink.border Terminal.Border.double
+        , Ink.border Terminal.Box.double
         ]
         [ Ink.text [] "Here are the available commands:"
         , Ink.column []

@@ -1,12 +1,12 @@
 module Ink.Internal exposing (..)
 
-import Terminal.Border exposing (Border)
+import Terminal.Box exposing (Box)
 
 
 type Attribute
     = Style String String
     | Layout Layout
-    | StyleBorder Border
+    | StyleBorder Box
     | Padding { top : Int, bottom : Int, left : Int, right : Int }
 
 
