@@ -35,6 +35,7 @@ row attrs =
 view : Element -> String
 view element =
     Ansi.Font.resetAll
+        ++ Ansi.Cursor.hide
         ++ Ansi.clearScreen
         ++ Ansi.Cursor.moveTo { row = 0, column = 0 }
         ++ viewHelper element
@@ -45,21 +46,25 @@ viewHelper element =
     case element of
         ElText attributes content ->
             let
-                splitAttrs =
+                attrs : Attrs
+                attrs =
                     splitAttributes attributes
             in
-            splitAttrs.before
-                ++ content
-                ++ splitAttrs.after
+            (attrs.before ++ content ++ attrs.after)
+                |> applyPadding attrs.padding
+                |> applyBorder attrs.border
 
         ElContainer attributes children ->
             let
+                attrs : Attrs
                 attrs =
                     splitAttributes attributes
 
+                hasBorder : Bool
                 hasBorder =
                     attrs.border /= Nothing
 
+                renderedChildren : String
                 renderedChildren =
                     String.join (spacers attrs.layouts)
                         (List.map
@@ -74,33 +79,72 @@ viewHelper element =
                             )
                             children
                         )
-
-                lines =
-                    String.split "\n" renderedChildren
-
-                widestLine =
-                    List.foldl
-                        (\line widest -> max (Ansi.String.width line) widest)
-                        0
-                        lines
             in
             (attrs.before ++ renderedChildren ++ attrs.after)
-                |> applyBorder attrs.border widestLine (List.length lines)
+                |> applyPadding attrs.padding
+                |> applyBorder attrs.border
 
 
-applyBorder : Maybe Border -> Int -> Int -> String -> String
-applyBorder maybeBorder width height content =
+applyPadding : Maybe { top : Int, bottom : Int, left : Int, right : Int } -> String -> String
+applyPadding maybePadding content =
+    case maybePadding of
+        Nothing ->
+            content
+
+        Just pad ->
+            let
+                leftPadding : String
+                leftPadding =
+                    String.repeat pad.left " "
+
+                widest : Int
+                widest =
+                    widestLine content
+            in
+            String.repeat pad.top "\n"
+                ++ content
+                ++ String.repeat pad.bottom "\n"
+                |> String.split "\n"
+                |> List.map (\line -> leftPadding ++ String.padRight (pad.left + widest) ' ' line)
+                |> String.join "\n"
+
+
+applyBorder : Maybe Border -> String -> String
+applyBorder maybeBorder content =
     case maybeBorder of
         Nothing ->
             content
 
         Just bor ->
-            Terminal.Border.draw { width = width + 1, height = height + 2 } bor ++ "\n" ++ content ++ "\n"
+            let
+                lines : List String
+                lines =
+                    String.split "\n" (Ansi.String.strip content)
+            in
+            Ansi.Cursor.savePosition
+                ++ "\n"
+                ++ content
+                ++ "\n"
+                ++ Ansi.Cursor.restorePosition
+                ++ Terminal.Border.draw
+                    { width = widestLine content + 1
+                    , height = List.length lines + 2
+                    }
+                    bor
+
+
+widestLine : String -> Int
+widestLine str =
+    List.foldl
+        (\line widest -> max (Ansi.String.width line) widest)
+        0
+        (String.split "\n" (Ansi.String.strip str))
 
 
 spacers : List Layout -> String
 spacers styles =
     let
+        amount : Int
         amount =
             case
                 List.Extra.get
@@ -147,7 +191,32 @@ spacers styles =
         symbol
 
 
-splitAttributes : List Attribute -> { before : String, after : String, layouts : List Layout, border : Maybe Border }
+type alias Attrs =
+    { before : String
+    , after : String
+    , layouts : List Layout
+    , border : Maybe Border
+    , padding : Maybe { top : Int, bottom : Int, left : Int, right : Int }
+    }
+
+
+defaultAttrs :
+    { before : List String
+    , after : List String
+    , layouts : List Layout
+    , border : Maybe Border
+    , padding : Maybe { top : Int, bottom : Int, left : Int, right : Int }
+    }
+defaultAttrs =
+    { before = []
+    , after = []
+    , layouts = []
+    , border = Nothing
+    , padding = Nothing
+    }
+
+
+splitAttributes : List Attribute -> Attrs
 splitAttributes attributes =
     List.foldr
         (\attr parts ->
@@ -163,14 +232,18 @@ splitAttributes attributes =
 
                 StyleBorder bor ->
                     { parts | border = Just bor }
+
+                Padding pad ->
+                    { parts | padding = Just pad }
         )
-        { before = [], after = [], layouts = [], border = Nothing }
+        defaultAttrs
         attributes
         |> (\parts ->
                 { before = String.concat parts.before
                 , after = String.concat parts.after
                 , layouts = List.reverse parts.layouts
                 , border = parts.border
+                , padding = parts.padding
                 }
            )
 
@@ -183,3 +256,13 @@ spacing dist =
 border : Border -> Attribute
 border borderStyle =
     StyleBorder borderStyle
+
+
+padding : Int -> Attribute
+padding size =
+    Padding { top = size, bottom = size, left = size, right = size }
+
+
+paddingEach : { top : Int, bottom : Int, left : Int, right : Int } -> Attribute
+paddingEach sizes =
+    Padding sizes

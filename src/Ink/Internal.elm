@@ -7,6 +7,7 @@ type Attribute
     = Style String String
     | Layout Layout
     | StyleBorder Border
+    | Padding { top : Int, bottom : Int, left : Int, right : Int }
 
 
 type Layout
@@ -18,7 +19,3 @@ type Layout
 type Element
     = ElText (List Attribute) String
     | ElContainer (List Attribute) (List Element)
-
-
-
--- | ElRow (List Attribute) (List Element)

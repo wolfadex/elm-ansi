@@ -74,22 +74,35 @@ render model =
 
         titleWidth =
             Ansi.String.width (Ink.view title)
+
+        welcomePadding =
+            Ansi.String.width "🌈  "
       in
       Ink.column
-        [ Ink.spacing 1
-        , Ink.border Terminal.Border.single
+        [-- Ink.border Terminal.Border.single
         ]
         (Ink.column []
             [ Ink.row [ Ink.spacing 1 ]
                 [ Ink.text [] "🌈  Welcome to Elm Land!"
                 , Ink.text [ Ink.Text.faint ] "1.2.3"
                 ]
-            , Ink.text [ Ink.Text.color Ansi.Color.green ]
-                ("    " ++ String.repeat titleWidth "⎺")
+            , Ink.text
+                [ Ink.Text.color Ansi.Color.green
+                , Ink.paddingEach { top = 0, bottom = 0, left = welcomePadding, right = 0 }
+                ]
+                (String.repeat titleWidth "⎺")
             ]
-            :: subcommandList
-            ++ [ Ink.row [ Ink.spacing 1 ]
-                    [ Ink.text [] "    Want to learn more? Visit"
+            :: subcommandList welcomePadding
+            ++ [ Ink.row
+                    [ Ink.spacing 1
+                    , Ink.paddingEach
+                        { top = 1
+                        , bottom = 0
+                        , left = welcomePadding
+                        , right = 0
+                        }
+                    ]
+                    [ Ink.text [] "Want to learn more? Visit"
                     , Ink.text [ Ink.Text.color Ansi.Color.cyan ] "https://elm.land/guide"
                     ]
                ]
@@ -99,13 +112,15 @@ render model =
     )
 
 
-subcommandList : List Element
-subcommandList =
+subcommandList : Int -> List Element
+subcommandList leftPadding =
     [ Ink.column
         [ Ink.spacing 1
-        , Ink.border Terminal.Border.double
+        , Ink.paddingEach { top = 0, bottom = 0, left = leftPadding, right = 0 }
+
+        -- , Ink.border Terminal.Border.double
         ]
-        [ Ink.text [] "    Here are the available commands:"
+        [ Ink.text [] "Here are the available commands:"
         , Ink.column []
             [ elmLandCommand "✨" "init <folder-name>" "...... create a new project"
             , elmLandCommand "🚀" "server" "................ run a local dev server"
@@ -121,7 +136,7 @@ subcommandList =
 elmLandCommand : String -> String -> String -> Element
 elmLandCommand emoji cmd desc =
     Ink.row [ Ink.spacing 1 ]
-        [ Ink.text [] ("   " ++ emoji ++ " elm-land")
+        [ Ink.text [] (emoji ++ " elm-land")
         , Ink.text [ Ink.Text.color pink ] cmd
         , Ink.text [] desc
         ]
