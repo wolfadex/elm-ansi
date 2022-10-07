@@ -1,4 +1,44 @@
-module Terminal exposing (..)
+module Terminal exposing
+    ( color
+    , backgroundColor
+    , invert
+    , bold
+    , faint
+    , italic
+    , underline
+    , strikeThrough
+    , resetFont
+    , blink
+    )
+
+{-|
+
+
+## Color
+
+@docs color
+@docs backgroundColor
+@docs invert
+
+
+## Style
+
+@docs bold
+@docs faint
+@docs italic
+@docs underline
+@docs strikeThrough
+
+@docs resetFont
+
+
+## Unsupported
+
+These have some limited support but it varies greatly by terminal
+
+@docs blink
+
+-}
 
 import Ansi
 import Ansi.Color exposing (Color, Location(..))

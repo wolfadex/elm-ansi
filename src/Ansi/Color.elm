@@ -18,9 +18,15 @@ module Ansi.Color exposing
     , yellow
     )
 
+{-| For creating colors for your terminal.
+
+TODO: Support converting to/from different color depths. Currently only support TrueColor
+
+-}
+
+import Ansi.Internal
 import Browser exposing (UrlRequest(..))
 import Color as HtmlColor
-import Ansi.Internal
 import Json.Decode exposing (Decoder)
 
 

@@ -1,22 +1,50 @@
-module Ansi.String exposing (..)
+module Ansi.String exposing
+    ( width
+    , padRight
+    , strip
+    )
 
-{-| -}
+{-| Various functions for working with ANSI strings. E.g. when measuring the width of an ANSI string you don't want to include any of the command characters, only those that are displayed in the terminal.
+
+@docs width
+@docs padRight
+@docs strip
+
+-}
 
 import Ansi
 import Ansi.Internal exposing (EastAsianCharWidth(..))
 import Regex
 
 
+{-| Add the specified string to the right side of your `String` so that it's the specified length. If this is impossible, e.g. in `padRight 10 "🌈" "hello"` the 🌈 is 2 columns wide meaning that your result will be either 9 or 11 columns wide, then white space will be added to fill the remaining space.
+-}
 padRight : Int -> String -> String -> String
-padRight amount chars content =
+padRight desiredWidth paddingStr content =
     let
-        len =
+        currentWidth : Int
+        currentWidth =
             width content
+
+        paddingWidth : Int
+        paddingWidth =
+            width paddingStr
+
+        padAmount : Int
+        padAmount =
+            (desiredWidth - currentWidth) // paddingWidth
+
+        whiteSpaceAmount : Int
+        whiteSpaceAmount =
+            desiredWidth - (paddingWidth * padAmount) - currentWidth
     in
-    content ++ String.repeat (amount - len) chars
+    content ++ String.repeat padAmount paddingStr ++ String.repeat whiteSpaceAmount " "
 
 
-{-| Copied from <https://github.com/sindresorhus/string-width/blob/main/index.js>
+{-| Measures the width of a `String` in terminal columns.
+
+Copied from <https://github.com/sindresorhus/string-width/blob/main/index.js>
+
 -}
 width : String -> Int
 width str =
@@ -73,6 +101,8 @@ width str =
                 replacedEmojis
 
 
+{-| Remove ANSI characters from a `String`. Mostly useful for things like measuring a `String`'s width.
+-}
 strip : String -> String
 strip =
     Regex.replace Ansi.regex (\_ -> "")

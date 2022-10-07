@@ -1,6 +1,19 @@
-module Ink.Layout exposing (..)
+module Ink.Layout exposing
+    ( padding
+    , paddingEach
+    , spacing
+    , border
+    )
 
 {-| Attributes that modifying the layout of your content.
+
+@docs padding
+@docs paddingEach
+
+@docs spacing
+
+@docs border
+
 -}
 
 import Ink.Internal exposing (Attribute(..), Layout(..))
@@ -75,6 +88,7 @@ Hello World
 │Hello World│
 └───────────┘
 ```
+
 -}
 border : Box -> Attribute
 border borderStyle =

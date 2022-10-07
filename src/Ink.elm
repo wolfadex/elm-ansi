@@ -1,6 +1,22 @@
-module Ink exposing (..)
+module Ink exposing
+    ( Element
+    , Attribute
+    , text
+    , column
+    , row
+    , toString
+    )
 
 {-| When building for the terminal we have 3 layers of abstraction. This package represents the top most layer. Instead of directly controlling the placement of each character and manually adding white space you instead talk about `Element`s, layout, and style.
+
+@docs Element
+@docs Attribute
+
+@docs text
+@docs column
+@docs row
+@docs toString
+
 -}
 
 import Ansi
