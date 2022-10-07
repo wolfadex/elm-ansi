@@ -23,8 +23,7 @@ import Ansi
 import Ansi.Cursor
 import Ansi.Font
 import Ansi.String
-import Ink.Internal exposing (Attribute(..), Element(..), Layout(..))
-import List.Extra
+import Ink.Internal exposing (Attribute(..), Element(..))
 import Terminal.Box exposing (Box)
 
 
@@ -50,15 +49,15 @@ text =
 {-| For grouping together multiple children in a vertical layout.
 -}
 column : List Attribute -> List Element -> Element
-column attrs =
-    ElContainer (Layout Column :: attrs)
+column =
+    ElColumn
 
 
 {-| For grouping together multiple children in a horizontal layout.
 -}
 row : List Attribute -> List Element -> Element
-row attrs =
-    ElContainer (Layout Row :: attrs)
+row =
+    ElRow
 
 
 {-| Most used for turning your `Element`s into a `String` to be forwarded on to your terminal.
@@ -69,15 +68,15 @@ toString element =
         ++ Ansi.Cursor.hide
         ++ Ansi.clearScreen
         ++ Ansi.Cursor.moveTo { row = 0, column = 0 }
-        ++ viewHelper element
+        ++ viewHelper 0 element
 
 
 
 ---- INTERNAL ----
 
 
-viewHelper : Element -> String
-viewHelper element =
+viewHelper : Int -> Element -> String
+viewHelper extraPadding element =
     case element of
         ElText attributes content ->
             let
@@ -89,7 +88,66 @@ viewHelper element =
                 |> applyPadding attrs.padding
                 |> applyBorder attrs.border
 
-        ElContainer attributes children ->
+        ElRow attributes children ->
+            let
+                attrs : Attrs
+                attrs =
+                    splitAttributes attributes
+
+                spacingStr =
+                    String.repeat attrs.spacing " "
+
+                renderedChildren : String
+                renderedChildren =
+                    List.foldl
+                        (\child ( result, xPad, index ) ->
+                            let
+                                renderedChild : String
+                                renderedChild =
+                                    viewHelper xPad child
+                                        |> (\ren ->
+                                                if index > 0 then
+                                                    ren
+                                                        |> String.split "\n"
+                                                        |> List.map ((++) spacingStr)
+                                                        |> String.join "\n"
+
+                                                else
+                                                    ren
+                                           )
+
+                                tallest =
+                                    max
+                                        (List.length (String.split "\n" result))
+                                        (List.length (String.split "\n" renderedChild))
+
+                                widestChildLine : Int
+                                widestChildLine =
+                                    widestLine renderedChild
+
+                                leftSide =
+                                    String.split "\n" (padHeight tallest result)
+
+                                rightSide =
+                                    String.split "\n" (padHeight tallest renderedChild)
+                            in
+                            ( List.map2 (++)
+                                leftSide
+                                rightSide
+                                |> String.join "\n"
+                            , widestChildLine
+                            , index + 1
+                            )
+                        )
+                        ( "", extraPadding, 0 )
+                        children
+                        |> (\( ren, _, _ ) -> ren)
+            in
+            (attrs.before ++ renderedChildren ++ attrs.after)
+                |> applyPadding attrs.padding
+                |> applyBorder attrs.border
+
+        ElColumn attributes children ->
             let
                 attrs : Attrs
                 attrs =
@@ -97,12 +155,33 @@ viewHelper element =
 
                 renderedChildren : String
                 renderedChildren =
-                    String.join (spacers attrs.layouts)
-                        (List.map viewHelper children)
+                    String.join (String.repeat (attrs.spacing + 1) "\n")
+                        (List.map (viewHelper extraPadding) children)
             in
             (attrs.before ++ renderedChildren ++ attrs.after)
                 |> applyPadding attrs.padding
                 |> applyBorder attrs.border
+
+
+padHeight : Int -> String -> String
+padHeight desiredHeight str =
+    let
+        widest : Int
+        widest =
+            widestLine str
+
+        lines : List String
+        lines =
+            String.split "\n" str
+
+        linesToAdd : List String
+        linesToAdd =
+            List.repeat
+                (desiredHeight - List.length lines)
+                (String.repeat widest " ")
+    in
+    (lines ++ linesToAdd)
+        |> String.join "\n"
 
 
 applyPadding : Maybe { top : Int, bottom : Int, left : Int, right : Int } -> String -> String
@@ -157,60 +236,10 @@ widestLine str =
         (String.split "\n" (Ansi.String.strip str))
 
 
-spacers : List Layout -> String
-spacers styles =
-    let
-        amount : Int
-        amount =
-            case
-                List.Extra.get
-                    (\style ->
-                        case style of
-                            Spacing d ->
-                                Just d
-
-                            _ ->
-                                Nothing
-                    )
-                    styles
-            of
-                Nothing ->
-                    0
-
-                Just dist ->
-                    dist
-
-        ( symbol, additionalAmount ) =
-            case
-                List.Extra.get
-                    (\style ->
-                        case style of
-                            Column ->
-                                Just ( "\n", 1 )
-
-                            Row ->
-                                Just ( " ", 0 )
-
-                            _ ->
-                                Nothing
-                    )
-                    styles
-            of
-                Nothing ->
-                    ( " ", 0 )
-
-                Just char ->
-                    char
-    in
-    String.repeat
-        (amount + additionalAmount)
-        symbol
-
-
 type alias Attrs =
     { before : String
     , after : String
-    , layouts : List Layout
+    , spacing : Int
     , border : Maybe Box
     , padding : Maybe { top : Int, bottom : Int, left : Int, right : Int }
     }
@@ -219,14 +248,14 @@ type alias Attrs =
 defaultAttrs :
     { before : List String
     , after : List String
-    , layouts : List Layout
+    , spacing : Int
     , border : Maybe Box
     , padding : Maybe { top : Int, bottom : Int, left : Int, right : Int }
     }
 defaultAttrs =
     { before = []
     , after = []
-    , layouts = []
+    , spacing = 0
     , border = Nothing
     , padding = Nothing
     }
@@ -243,8 +272,8 @@ splitAttributes attributes =
                         , after = a :: parts.after
                     }
 
-                Layout l ->
-                    { parts | layouts = l :: parts.layouts }
+                Spacing s ->
+                    { parts | spacing = s }
 
                 StyleBorder bor ->
                     { parts | border = Just bor }
@@ -257,7 +286,7 @@ splitAttributes attributes =
         |> (\parts ->
                 { before = String.concat parts.before
                 , after = String.concat parts.after
-                , layouts = List.reverse parts.layouts
+                , spacing = parts.spacing
                 , border = parts.border
                 , padding = parts.padding
                 }

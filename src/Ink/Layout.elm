@@ -16,7 +16,7 @@ module Ink.Layout exposing
 
 -}
 
-import Ink.Internal exposing (Attribute(..), Layout(..))
+import Ink.Internal exposing (Attribute(..))
 import Terminal.Box exposing (Box)
 
 
@@ -36,8 +36,8 @@ import Terminal.Box exposing (Box)
 
 -}
 spacing : Int -> Attribute
-spacing dist =
-    Layout (Spacing dist)
+spacing =
+    Spacing
 
 
 {-| Adds the specified number of columns and lines around all sides of your content.

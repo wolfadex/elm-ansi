@@ -5,17 +5,12 @@ import Terminal.Box exposing (Box)
 
 type Attribute
     = Style String String
-    | Layout Layout
+    | Spacing Int
     | StyleBorder Box
     | Padding { top : Int, bottom : Int, left : Int, right : Int }
 
 
-type Layout
-    = Spacing Int
-    | Column
-    | Row
-
-
 type Element
     = ElText (List Attribute) String
-    | ElContainer (List Attribute) (List Element)
+    | ElRow (List Attribute) (List Element)
+    | ElColumn (List Attribute) (List Element)

@@ -64,61 +64,53 @@ render : Model -> ( Model, Cmd Msg )
 render model =
     ( model
     , let
+        welcomeText : String
         welcomeText =
             "Welcome to Elm Land!"
 
+        title : Element
         title =
             Ink.row [ Ink.Layout.spacing 1 ]
                 [ Ink.text [] welcomeText
                 , Ink.text [ Ink.Style.faint ] "1.2.3"
                 ]
 
-        rainbowPrefix =
-            "🌈  "
-
+        titleWidth : Int
         titleWidth =
             Ansi.String.width (Ink.toString title)
-
-        welcomePadding =
-            Ansi.String.width rainbowPrefix
       in
-      Ink.column [ Ink.Layout.border Terminal.Box.single ]
-        (Ink.column []
-            [ Ink.row [ Ink.Layout.spacing 1 ]
-                [ Ink.text [] (rainbowPrefix ++ welcomeText)
-                , Ink.text [ Ink.Style.faint ] "1.2.3"
-                ]
-            , Ink.text
-                [ Ink.Style.color Ansi.Color.green
-                , Ink.Layout.paddingEach { top = 0, bottom = 0, left = welcomePadding, right = 0 }
-                ]
-                (String.repeat titleWidth "⎺")
-            ]
-            :: subcommandList welcomePadding
-            ++ [ Ink.row
-                    [ Ink.Layout.spacing 1
-                    , Ink.Layout.paddingEach
-                        { top = 1
-                        , bottom = 0
-                        , left = welcomePadding
-                        , right = 0
-                        }
-                    ]
-                    [ Ink.text [] "Want to learn more? Visit"
-                    , Ink.text [ Ink.Style.color Ansi.Color.cyan ] "https://elm.land/guide"
-                    ]
-               ]
-        )
+      Ink.row [ Ink.Layout.border Terminal.Box.single ]
+        [ Ink.text [] "🌈  "
+        , Ink.column []
+            ([ Ink.row [ Ink.Layout.spacing 1 ]
+                [ Ink.text [] welcomeText, Ink.text [ Ink.Style.faint ] "1.2.3" ]
+             , Ink.text [ Ink.Style.color Ansi.Color.green ] (String.repeat titleWidth "⎺")
+             ]
+                ++ subcommandList
+                ++ [ Ink.row
+                        [ Ink.Layout.spacing 1
+                        , Ink.Layout.paddingEach
+                            { top = 1
+                            , bottom = 0
+                            , left = 0
+                            , right = 0
+                            }
+                        ]
+                        [ Ink.text [] "Want to learn more? Visit"
+                        , Ink.text [ Ink.Style.color Ansi.Color.cyan ] "https://elm.land/guide"
+                        ]
+                   ]
+            )
+        ]
         |> Ink.toString
         |> stdout
     )
 
 
-subcommandList : Int -> List Element
-subcommandList leftPadding =
+subcommandList : List Element
+subcommandList =
     [ Ink.column
         [ Ink.Layout.spacing 1
-        , Ink.Layout.paddingEach { top = 0, bottom = 0, left = leftPadding, right = 0 }
         ]
         [ Ink.text [] "Here are the available commands:"
         , Ink.column []
