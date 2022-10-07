@@ -1,5 +1,8 @@
 module Ink exposing (..)
 
+{-| When building for the terminal we have 3 layers of abstraction. This package represents the top most layer. Instead of directly controlling the placement of each character and manually adding white space you instead talk about `Element`s, layout, and style.
+-}
+
 import Ansi
 import Ansi.Cursor
 import Ansi.Font
@@ -9,36 +12,52 @@ import List.Extra
 import Terminal.Box exposing (Box)
 
 
+{-| Much like [mdgriffith/elm-ui](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/), Ink is made up of a few core `Element`s. In this case you have Text and Containers, the 2nd of these hold 0 or more children and does a lot of the layout.
+-}
 type alias Element =
     Ink.Internal.Element
 
 
+{-| Much like working with `Html`, our `Element`s have a way of applying layout and styling attributes.
+-}
 type alias Attribute =
     Ink.Internal.Attribute
 
 
+{-| For displaying text in the terminal.
+-}
 text : List Attribute -> String -> Element
 text =
     ElText
 
 
+{-| For grouping together multiple children in a vertical layout.
+-}
 column : List Attribute -> List Element -> Element
 column attrs =
     ElContainer (Layout Column :: attrs)
 
 
+{-| For grouping together multiple children in a horizontal layout.
+-}
 row : List Attribute -> List Element -> Element
 row attrs =
     ElContainer (Layout Row :: attrs)
 
 
-view : Element -> String
-view element =
+{-| Most used for turning your `Element`s into a `String` to be forwarded on to your terminal.
+-}
+toString : Element -> String
+toString element =
     Ansi.Font.resetAll
         ++ Ansi.Cursor.hide
         ++ Ansi.clearScreen
         ++ Ansi.Cursor.moveTo { row = 0, column = 0 }
         ++ viewHelper element
+
+
+
+---- INTERNAL ----
 
 
 viewHelper : Element -> String
@@ -227,23 +246,3 @@ splitAttributes attributes =
                 , padding = parts.padding
                 }
            )
-
-
-spacing : Int -> Attribute
-spacing dist =
-    Layout (Spacing dist)
-
-
-border : Box -> Attribute
-border borderStyle =
-    StyleBorder borderStyle
-
-
-padding : Int -> Attribute
-padding size =
-    Padding { top = size, bottom = size, left = size, right = size }
-
-
-paddingEach : { top : Int, bottom : Int, left : Int, right : Int } -> Attribute
-paddingEach sizes =
-    Padding sizes
