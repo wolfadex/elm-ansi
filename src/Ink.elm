@@ -60,25 +60,10 @@ viewHelper element =
                 attrs =
                     splitAttributes attributes
 
-                hasBorder : Bool
-                hasBorder =
-                    attrs.border /= Nothing
-
                 renderedChildren : String
                 renderedChildren =
                     String.join (spacers attrs.layouts)
-                        (List.map
-                            (\child ->
-                                (if hasBorder then
-                                    " "
-
-                                 else
-                                    ""
-                                )
-                                    ++ viewHelper child
-                            )
-                            children
-                        )
+                        (List.map viewHelper children)
             in
             (attrs.before ++ renderedChildren ++ attrs.after)
                 |> applyPadding attrs.padding
@@ -101,11 +86,9 @@ applyPadding maybePadding content =
                 widest =
                     widestLine content
             in
-            String.repeat pad.top "\n"
-                ++ content
-                ++ String.repeat pad.bottom "\n"
+            (String.repeat pad.top "\n" ++ content ++ String.repeat pad.bottom "\n")
                 |> String.split "\n"
-                |> List.map (\line -> leftPadding ++ String.padRight (pad.left + widest) ' ' line)
+                |> List.map (\line -> leftPadding ++ Ansi.String.padRight (pad.right + widest) " " line)
                 |> String.join "\n"
 
 
@@ -121,26 +104,14 @@ applyBorder maybeBorder content =
                 widest =
                     widestLine content
             in
-            bor.topLeft
-                ++ String.repeat widest bor.top
-                ++ bor.topRight
-                ++ "\n"
+            (bor.topLeft ++ String.repeat widest bor.top ++ bor.topRight ++ "\n")
                 ++ (content
                         |> String.split "\n"
-                        |> List.map
-                            (\line ->
-                                let
-                                    len =
-                                        Ansi.String.width line
-                                in
-                                bor.left ++ line ++ String.repeat (widest - len) " " ++ bor.right
-                            )
+                        |> List.map (\line -> bor.left ++ Ansi.String.padRight widest " " line ++ bor.right)
                         |> String.join "\n"
                    )
                 ++ "\n"
-                ++ bor.bottomLeft
-                ++ String.repeat widest bor.bottom
-                ++ bor.bottomRight
+                ++ (bor.bottomLeft ++ String.repeat widest bor.bottom ++ bor.bottomRight)
 
 
 widestLine : String -> Int

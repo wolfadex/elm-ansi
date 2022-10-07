@@ -63,24 +63,28 @@ render : Model -> ( Model, Cmd Msg )
 render model =
     ( model
     , let
+        welcomeText =
+            "Welcome to Elm Land!"
+
         title =
             Ink.row [ Ink.spacing 1 ]
-                [ Ink.text [] "Welcome to Elm Land!"
+                [ Ink.text [] welcomeText
                 , Ink.text [ Ink.Text.faint ] "1.2.3"
                 ]
+
+        rainbowPrefix =
+            "🌈  "
 
         titleWidth =
             Ansi.String.width (Ink.view title)
 
         welcomePadding =
-            Ansi.String.width "🌈  "
+            Ansi.String.width rainbowPrefix
       in
-      Ink.column
-        [ Ink.border Terminal.Box.single
-        ]
+      Ink.column []
         (Ink.column []
             [ Ink.row [ Ink.spacing 1 ]
-                [ Ink.text [] "🌈  Welcome to Elm Land!"
+                [ Ink.text [] (rainbowPrefix ++ welcomeText)
                 , Ink.text [ Ink.Text.faint ] "1.2.3"
                 ]
             , Ink.text
@@ -114,7 +118,6 @@ subcommandList leftPadding =
     [ Ink.column
         [ Ink.spacing 1
         , Ink.paddingEach { top = 0, bottom = 0, left = leftPadding, right = 0 }
-        , Ink.border Terminal.Box.double
         ]
         [ Ink.text [] "Here are the available commands:"
         , Ink.column []

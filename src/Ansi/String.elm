@@ -7,6 +7,15 @@ import Ansi.Internal exposing (EastAsianCharWidth(..))
 import Regex
 
 
+padRight : Int -> String -> String -> String
+padRight amount chars content =
+    let
+        len =
+            width content
+    in
+    content ++ String.repeat (amount - len) chars
+
+
 {-| Copied from <https://github.com/sindresorhus/string-width/blob/main/index.js>
 -}
 width : String -> Int
