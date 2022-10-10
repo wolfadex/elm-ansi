@@ -5,6 +5,7 @@ module Ink exposing
     , column
     , row
     , toString
+    , Config, lineHorizontal, lineVertical
     )
 
 {-| When building for the terminal we have 3 layers of abstraction. This package represents the top most layer. Instead of directly controlling the placement of each character and manually adding white space you instead talk about `Element`s, layout, and style.
@@ -20,10 +21,11 @@ module Ink exposing
 -}
 
 import Ansi
+import Ansi.Color exposing (Depth(..))
 import Ansi.Cursor
 import Ansi.Font
 import Ansi.String
-import Ink.Internal exposing (Attribute(..), Element(..))
+import Ink.Internal exposing (Attribute(..), Element(..), Length(..))
 import Terminal.Box exposing (Box)
 
 
@@ -60,23 +62,55 @@ row =
     ElRow
 
 
+lineHorizontal : List Attribute -> String -> Element
+lineHorizontal =
+    ElLineHorizontal
+
+
+lineVertical : List Attribute -> String -> Element
+lineVertical =
+    ElLineVertical
+
+
+type alias Config =
+    { colorDepth : Depth
+    , rows : Int
+    , columns : Int
+    }
+
+
 {-| Most used for turning your `Element`s into a `String` to be forwarded on to your terminal.
 -}
-toString : Element -> String
-toString element =
+toString : Config -> Element -> String
+toString config element =
     Ansi.Font.resetAll
         ++ Ansi.Cursor.hide
         ++ Ansi.clearScreen
         ++ Ansi.Cursor.moveTo { row = 0, column = 0 }
-        ++ viewHelper 0 element
+        ++ viewHelper
+            { column = 0
+            , row = 0
+            , width = config.columns
+            , height = config.rows
+            }
+            0
+            element
 
 
 
 ---- INTERNAL ----
 
 
-viewHelper : Int -> Element -> String
-viewHelper extraPadding element =
+type alias Options =
+    { column : Int
+    , row : Int
+    , width : Int
+    , height : Int
+    }
+
+
+viewHelper : Options -> Int -> Element -> String
+viewHelper opts extraPadding element =
     case element of
         ElText attributes content ->
             let
@@ -85,7 +119,54 @@ viewHelper extraPadding element =
                     splitAttributes attributes
             in
             (attrs.before ++ content ++ attrs.after)
-                |> applyPadding attrs.padding
+                |> applyPadding opts attrs
+                |> applyBorder attrs
+
+        ElLineHorizontal attributes content ->
+            let
+                attrs : Attrs
+                attrs =
+                    splitAttributes attributes
+
+                drawWidth : Int
+                drawWidth =
+                    case attrs.width of
+                        Fill ->
+                            opts.width
+
+                        Exact l ->
+                            l
+
+                        Shrink ->
+                            0
+                                |> (\w ->
+                                        if attrs.border /= Nothing then
+                                            max 0 (w - 2)
+
+                                        else
+                                            w
+                                   )
+                                |> (\w ->
+                                        case attrs.padding of
+                                            Nothing ->
+                                                w
+
+                                            Just pad ->
+                                                max 0 (w - pad.left - pad.right)
+                                   )
+            in
+            (attrs.before ++ Ansi.String.padRight drawWidth content "" ++ attrs.after)
+                |> applyPadding opts attrs
+                |> applyBorder attrs
+
+        ElLineVertical attributes content ->
+            let
+                attrs : Attrs
+                attrs =
+                    splitAttributes attributes
+            in
+            (attrs.before ++ content ++ attrs.after)
+                |> applyPadding opts attrs
                 |> applyBorder attrs
 
         ElRow attributes children ->
@@ -104,7 +185,7 @@ viewHelper extraPadding element =
                             let
                                 renderedChild : String
                                 renderedChild =
-                                    viewHelper xPad child
+                                    viewHelper opts xPad child
                                         |> (\ren ->
                                                 if index > 0 then
                                                     ren
@@ -144,7 +225,7 @@ viewHelper extraPadding element =
                         |> (\( ren, _, _ ) -> ren)
             in
             (attrs.before ++ renderedChildren ++ attrs.after)
-                |> applyPadding attrs.padding
+                |> applyPadding opts attrs
                 |> applyBorder attrs
 
         ElColumn attributes children ->
@@ -155,11 +236,20 @@ viewHelper extraPadding element =
 
                 renderedChildren : String
                 renderedChildren =
-                    String.join (String.repeat (attrs.spacing + 1) "\n")
-                        (List.map (viewHelper extraPadding) children)
+                    children
+                        |> List.map
+                            (viewHelper
+                                { column = opts.column
+                                , row = opts.row
+                                , width = opts.width
+                                , height = opts.height
+                                }
+                                extraPadding
+                            )
+                        |> String.join (String.repeat (attrs.spacing + 1) "\n")
             in
             (attrs.before ++ renderedChildren ++ attrs.after)
-                |> applyPadding attrs.padding
+                |> applyPadding opts attrs
                 |> applyBorder attrs
 
 
@@ -184,9 +274,9 @@ padHeight desiredHeight str =
         |> String.join "\n"
 
 
-applyPadding : Maybe { top : Int, bottom : Int, left : Int, right : Int } -> String -> String
-applyPadding maybePadding content =
-    case maybePadding of
+applyPadding : Options -> Attrs -> String -> String
+applyPadding opts attrs content =
+    case attrs.padding of
         Nothing ->
             content
 
@@ -196,9 +286,21 @@ applyPadding maybePadding content =
                 leftPadding =
                     String.repeat pad.left " "
 
+                hasBorder : Bool
+                hasBorder =
+                    attrs.border /= Nothing
+
                 widest : Int
                 widest =
                     widestLine content
+                        |> min opts.width
+                        |> (\w ->
+                                if hasBorder then
+                                    w - 2
+
+                                else
+                                    w
+                           )
             in
             (String.repeat pad.top "\n" ++ content ++ String.repeat pad.bottom "\n")
                 |> String.split "\n"
@@ -249,6 +351,8 @@ type alias Attrs =
     { before : String
     , after : String
     , spacing : Int
+    , width : Length
+    , height : Length
     , padding : Maybe { top : Int, bottom : Int, left : Int, right : Int }
     , border : Maybe Box
     , borderBefore : String
@@ -260,6 +364,8 @@ defaultAttrs :
     { before : List String
     , after : List String
     , spacing : Int
+    , width : Length
+    , height : Length
     , padding : Maybe { top : Int, bottom : Int, left : Int, right : Int }
     , border : Maybe Box
     , borderBefore : List String
@@ -269,6 +375,8 @@ defaultAttrs =
     { before = []
     , after = []
     , spacing = 0
+    , width = Shrink
+    , height = Shrink
     , border = Nothing
     , padding = Nothing
     , borderBefore = []
@@ -290,6 +398,12 @@ splitAttributes attributes =
                 Spacing s ->
                     { parts | spacing = s }
 
+                Width l ->
+                    { parts | width = l }
+
+                Height l ->
+                    { parts | height = l }
+
                 Padding pad ->
                     { parts | padding = Just pad }
 
@@ -308,6 +422,8 @@ splitAttributes attributes =
                 { before = String.concat parts.before
                 , after = String.concat parts.after
                 , spacing = parts.spacing
+                , width = parts.width
+                , height = parts.height
                 , padding = parts.padding
                 , border = parts.border
                 , borderBefore = String.concat parts.borderBefore

@@ -3,6 +3,7 @@ module Ink.Layout exposing
     , paddingEach
     , spacing
     , border
+    , Length, exact, fill, height, shrink, width
     )
 
 {-| Attributes that modifying the layout of your content.
@@ -16,7 +17,7 @@ module Ink.Layout exposing
 
 -}
 
-import Ink.Internal exposing (Attribute(..))
+import Ink.Internal exposing (Attribute(..), Length(..))
 import Terminal.Box exposing (Box)
 
 
@@ -92,3 +93,32 @@ Hello World
 border : Box -> Attribute
 border borderStyle =
     BorderStyle borderStyle
+
+
+type alias Length =
+    Ink.Internal.Length
+
+
+width : Length -> Attribute
+width =
+    Width
+
+
+height : Length -> Attribute
+height =
+    Height
+
+
+fill : Length
+fill =
+    Fill
+
+
+shrink : Length
+shrink =
+    Shrink
+
+
+exact : Int -> Length
+exact =
+    Exact

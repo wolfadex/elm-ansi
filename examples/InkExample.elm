@@ -6,10 +6,11 @@ import Ink exposing (Element)
 import Ink.Border
 import Ink.Layout
 import Ink.Style
+import Json.Decode exposing (Value)
 import Terminal.Box
 
 
-main : Program Int Model Msg
+main : Program Flags Model Msg
 main =
     Platform.worker
         { init = init
@@ -19,23 +20,42 @@ main =
 
 
 type alias Model =
-    { input : String
+    { inkConfig : Ink.Config
     }
 
 
-init : Int -> ( Model, Cmd Msg )
-init _ =
+type alias Flags =
+    { colorDepth : Value
+    , columns : Int
+    , rows : Int
+    }
+
+
+init : Flags -> ( Model, Cmd Msg )
+init flags =
     render
-        { input = ""
+        { inkConfig =
+            { colorDepth =
+                Json.Decode.decodeValue Ansi.Color.decodeDepth flags.colorDepth
+                    |> Result.withDefault Ansi.Color.TrueColor
+            , columns = flags.columns
+            , rows = flags.rows
+            }
         }
 
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    stdin Stdin
+    Sub.batch
+        [ stdin Stdin
+        , resize Resize
+        ]
 
 
 port stdin : (String -> msg) -> Sub msg
+
+
+port resize : ({ columns : Int, rows : Int } -> msg) -> Sub msg
 
 
 port stdout : String -> Cmd msg
@@ -43,21 +63,30 @@ port stdout : String -> Cmd msg
 
 type Msg
     = Stdin String
+    | Resize { columns : Int, rows : Int }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Stdin str ->
-            { model
-                | input =
-                    -- Delete or Backspace (not sure about forward delete)
-                    if str == "\u{007F}" || str == "\u{0008}" then
-                        String.dropRight 1 model.input
+            -- { model
+            --     | input =
+            --         -- Delete or Backspace (not sure about forward delete)
+            --         if str == "\u{007F}" || str == "\u{0008}" then
+            --             String.dropRight 1 model.input
+            --         else
+            --             model.input ++ str
+            -- }
+            --     |> render
+            ( model, Cmd.none )
 
-                    else
-                        model.input ++ str
-            }
+        Resize size ->
+            let
+                inkConfig =
+                    model.inkConfig
+            in
+            { model | inkConfig = { inkConfig | columns = size.columns, rows = size.rows } }
                 |> render
 
 
@@ -78,7 +107,7 @@ render model =
 
         titleWidth : Int
         titleWidth =
-            Ansi.String.width (Ink.toString title)
+            Ansi.String.width (Ink.toString model.inkConfig title)
       in
       Ink.row
         [ Ink.Layout.border Terminal.Box.single
@@ -88,7 +117,13 @@ render model =
         , Ink.column []
             ([ Ink.row [ Ink.Layout.spacing 1 ]
                 [ Ink.text [] welcomeText, Ink.text [ Ink.Style.faint ] "1.2.3" ]
-             , Ink.text [ Ink.Style.color Ansi.Color.green ] (String.repeat titleWidth "⎺")
+             , Ink.lineHorizontal
+                [ Ink.Style.color Ansi.Color.green
+
+                -- , Ink.Layout.width Ink.Layout.fill
+                , Ink.Layout.width (Ink.Layout.exact titleWidth)
+                ]
+                "⎺"
              ]
                 ++ subcommandList
                 ++ [ Ink.row
@@ -106,7 +141,7 @@ render model =
                    ]
             )
         ]
-        |> Ink.toString
+        |> Ink.toString model.inkConfig
         |> stdout
     )
 

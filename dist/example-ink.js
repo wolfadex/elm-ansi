@@ -11,8 +11,12 @@ const initialState = elmAnsi.init(function (data) {
   app.ports.stdin.send(data);
 });
 
+elmAnsi.onResize(function (colsAndRos) {
+  app.ports.resize.send(colsAndRos);
+});
+
 app = Elm.InkExample.init({
-  flags: Date.now(),
+  flags: initialState,
 });
 
 app.ports.stdout.subscribe(function (data) {
