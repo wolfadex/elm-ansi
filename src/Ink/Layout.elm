@@ -55,7 +55,6 @@ Hello World
 ```sh
 
  Hello World
-
 ```
 
 -}
@@ -92,4 +91,4 @@ Hello World
 -}
 border : Box -> Attribute
 border borderStyle =
-    StyleBorder borderStyle
+    BorderStyle borderStyle

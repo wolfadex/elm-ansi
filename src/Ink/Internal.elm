@@ -6,8 +6,9 @@ import Terminal.Box exposing (Box)
 type Attribute
     = Style String String
     | Spacing Int
-    | StyleBorder Box
     | Padding { top : Int, bottom : Int, left : Int, right : Int }
+    | BorderStyle Box
+    | BorderFontStyle String String
 
 
 type Element

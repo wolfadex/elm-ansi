@@ -86,7 +86,7 @@ viewHelper extraPadding element =
             in
             (attrs.before ++ content ++ attrs.after)
                 |> applyPadding attrs.padding
-                |> applyBorder attrs.border
+                |> applyBorder attrs
 
         ElRow attributes children ->
             let
@@ -145,7 +145,7 @@ viewHelper extraPadding element =
             in
             (attrs.before ++ renderedChildren ++ attrs.after)
                 |> applyPadding attrs.padding
-                |> applyBorder attrs.border
+                |> applyBorder attrs
 
         ElColumn attributes children ->
             let
@@ -160,7 +160,7 @@ viewHelper extraPadding element =
             in
             (attrs.before ++ renderedChildren ++ attrs.after)
                 |> applyPadding attrs.padding
-                |> applyBorder attrs.border
+                |> applyBorder attrs
 
 
 padHeight : Int -> String -> String
@@ -206,9 +206,9 @@ applyPadding maybePadding content =
                 |> String.join "\n"
 
 
-applyBorder : Maybe Box -> String -> String
-applyBorder maybeBorder content =
-    case maybeBorder of
+applyBorder : Attrs -> String -> String
+applyBorder attrs content =
+    case attrs.border of
         Nothing ->
             content
 
@@ -217,15 +217,24 @@ applyBorder maybeBorder content =
                 widest : Int
                 widest =
                     widestLine content
+
+                wrapBorderStyle : String -> String
+                wrapBorderStyle str =
+                    attrs.borderBefore ++ str ++ attrs.borderAfter
             in
-            (bor.topLeft ++ String.repeat widest bor.top ++ bor.topRight ++ "\n")
+            (wrapBorderStyle (bor.topLeft ++ String.repeat widest bor.top ++ bor.topRight) ++ "\n")
                 ++ (content
                         |> String.split "\n"
-                        |> List.map (\line -> bor.left ++ Ansi.String.padRight widest " " line ++ bor.right)
+                        |> List.map
+                            (\line ->
+                                wrapBorderStyle bor.left
+                                    ++ Ansi.String.padRight widest " " line
+                                    ++ wrapBorderStyle bor.right
+                            )
                         |> String.join "\n"
                    )
                 ++ "\n"
-                ++ (bor.bottomLeft ++ String.repeat widest bor.bottom ++ bor.bottomRight)
+                ++ wrapBorderStyle (bor.bottomLeft ++ String.repeat widest bor.bottom ++ bor.bottomRight)
 
 
 widestLine : String -> Int
@@ -240,8 +249,10 @@ type alias Attrs =
     { before : String
     , after : String
     , spacing : Int
-    , border : Maybe Box
     , padding : Maybe { top : Int, bottom : Int, left : Int, right : Int }
+    , border : Maybe Box
+    , borderBefore : String
+    , borderAfter : String
     }
 
 
@@ -249,8 +260,10 @@ defaultAttrs :
     { before : List String
     , after : List String
     , spacing : Int
-    , border : Maybe Box
     , padding : Maybe { top : Int, bottom : Int, left : Int, right : Int }
+    , border : Maybe Box
+    , borderBefore : List String
+    , borderAfter : List String
     }
 defaultAttrs =
     { before = []
@@ -258,6 +271,8 @@ defaultAttrs =
     , spacing = 0
     , border = Nothing
     , padding = Nothing
+    , borderBefore = []
+    , borderAfter = []
     }
 
 
@@ -275,11 +290,17 @@ splitAttributes attributes =
                 Spacing s ->
                     { parts | spacing = s }
 
-                StyleBorder bor ->
-                    { parts | border = Just bor }
-
                 Padding pad ->
                     { parts | padding = Just pad }
+
+                BorderStyle bor ->
+                    { parts | border = Just bor }
+
+                BorderFontStyle b a ->
+                    { parts
+                        | borderBefore = b :: parts.borderBefore
+                        , borderAfter = a :: parts.borderAfter
+                    }
         )
         defaultAttrs
         attributes
@@ -287,7 +308,9 @@ splitAttributes attributes =
                 { before = String.concat parts.before
                 , after = String.concat parts.after
                 , spacing = parts.spacing
-                , border = parts.border
                 , padding = parts.padding
+                , border = parts.border
+                , borderBefore = String.concat parts.borderBefore
+                , borderAfter = String.concat parts.borderAfter
                 }
            )

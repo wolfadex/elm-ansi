@@ -3,6 +3,7 @@ port module InkExample exposing (main)
 import Ansi.Color exposing (Location(..))
 import Ansi.String
 import Ink exposing (Element)
+import Ink.Border
 import Ink.Layout
 import Ink.Style
 import Terminal.Box
@@ -79,7 +80,10 @@ render model =
         titleWidth =
             Ansi.String.width (Ink.toString title)
       in
-      Ink.row [ Ink.Layout.border Terminal.Box.single ]
+      Ink.row
+        [ Ink.Layout.border Terminal.Box.single
+        , Ink.Border.color Ansi.Color.red
+        ]
         [ Ink.text [] "🌈  "
         , Ink.column []
             ([ Ink.row [ Ink.Layout.spacing 1 ]
