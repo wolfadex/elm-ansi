@@ -112,7 +112,7 @@ restorePosition =
 -}
 hide : String
 hide =
-    Ansi.Internal.toAnsiCommand "??25l"
+    Ansi.Internal.toAnsiCommand "?25l"
 
 
 {-| Show the cursor if it was hidden
