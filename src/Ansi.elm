@@ -12,6 +12,7 @@ module Ansi exposing
     , scrollDownBy
     , regex
     , emojiRegex
+    , getCommand, isDownArrow, isLeftArrow, isRightArrow, isUpArrow
     )
 
 {-| When building for the terminal we have 3 layers of abstraction. This package represents the bottom most layer. With the functions provided here you can manipulate each character within the terminal with minute control.
@@ -129,6 +130,61 @@ saveScreen =
 restoreScreen : String
 restoreScreen =
     Ansi.Internal.toAnsiCommand "?47l"
+
+
+{-| If the input is an ansi command, return the command portion, with the escape code removed.
+-}
+getCommand : String -> Maybe String
+getCommand str =
+    if String.startsWith Ansi.Internal.commandStr str then
+        Just (String.dropLeft (String.length Ansi.Internal.commandStr) str)
+
+    else
+        Nothing
+
+
+{-| -}
+isUpArrow : String -> Bool
+isUpArrow str =
+    case getCommand str of
+        Just "A" ->
+            True
+
+        _ ->
+            False
+
+
+{-| -}
+isDownArrow : String -> Bool
+isDownArrow str =
+    case getCommand str of
+        Just "B" ->
+            True
+
+        _ ->
+            False
+
+
+{-| -}
+isRightArrow : String -> Bool
+isRightArrow str =
+    case getCommand str of
+        Just "C" ->
+            True
+
+        _ ->
+            False
+
+
+{-| -}
+isLeftArrow : String -> Bool
+isLeftArrow str =
+    case getCommand str of
+        Just "D" ->
+            True
+
+        _ ->
+            False
 
 
 {-| Matches regex characters

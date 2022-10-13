@@ -6,7 +6,12 @@ import Regex
 
 toAnsiCommand : String -> String
 toAnsiCommand str =
-    "\u{001B}[" ++ str
+    commandStr ++ str
+
+
+commandStr : String
+commandStr =
+    "\u{001B}["
 
 
 
