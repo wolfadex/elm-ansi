@@ -68,100 +68,100 @@ import Ansi.Internal
 {-| -}
 color : Color -> String
 color c =
-    Ansi.Internal.toAnsiCommand (Ansi.Color.encode Foreground c)
+    Ansi.Internal.toCommand (Ansi.Color.encode Foreground c)
 
 
 {-| -}
 resetAll : String
 resetAll =
-    Ansi.Internal.toAnsiCommand "0m"
+    Ansi.Internal.toCommand "0m"
 
 
 {-| -}
 bold : String
 bold =
-    Ansi.Internal.toAnsiCommand "1m"
+    Ansi.Internal.toCommand "1m"
 
 
 {-| -}
 faint : String
 faint =
-    Ansi.Internal.toAnsiCommand "2m"
+    Ansi.Internal.toCommand "2m"
 
 
 {-| -}
 resetBoldFaint : String
 resetBoldFaint =
-    Ansi.Internal.toAnsiCommand "22m"
+    Ansi.Internal.toCommand "22m"
 
 
 {-| -}
 italic : String
 italic =
-    Ansi.Internal.toAnsiCommand "3m"
+    Ansi.Internal.toCommand "3m"
 
 
 {-| -}
 resetItalic : String
 resetItalic =
-    Ansi.Internal.toAnsiCommand "23m"
+    Ansi.Internal.toCommand "23m"
 
 
 {-| -}
 underline : String
 underline =
-    Ansi.Internal.toAnsiCommand "4m"
+    Ansi.Internal.toCommand "4m"
 
 
 {-| -}
 resetUnderline : String
 resetUnderline =
-    Ansi.Internal.toAnsiCommand "24m"
+    Ansi.Internal.toCommand "24m"
 
 
 {-| -}
 blink : String
 blink =
-    Ansi.Internal.toAnsiCommand "5m"
+    Ansi.Internal.toCommand "5m"
 
 
 {-| -}
 resetBlink : String
 resetBlink =
-    Ansi.Internal.toAnsiCommand "25m"
+    Ansi.Internal.toCommand "25m"
 
 
 {-| -}
 invert : String
 invert =
-    Ansi.Internal.toAnsiCommand "7m"
+    Ansi.Internal.toCommand "7m"
 
 
 {-| -}
 resetInvert : String
 resetInvert =
-    Ansi.Internal.toAnsiCommand "27m"
+    Ansi.Internal.toCommand "27m"
 
 
 {-| -}
 hide : String
 hide =
-    Ansi.Internal.toAnsiCommand "8m"
+    Ansi.Internal.toCommand "8m"
 
 
 {-| -}
 show : String
 show =
-    Ansi.Internal.toAnsiCommand "28m"
+    Ansi.Internal.toCommand "28m"
 
 
 {-| -}
 strikeThrough : String
 strikeThrough =
-    Ansi.Internal.toAnsiCommand "9m"
+    Ansi.Internal.toCommand "9m"
 
 
 {-| -}
 resetStrikeThrough : String
 resetStrikeThrough =
-    Ansi.Internal.toAnsiCommand "29m"
+    Ansi.Internal.toCommand "29m"

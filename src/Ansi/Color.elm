@@ -181,7 +181,7 @@ rgb opts =
 
 reset : Location -> String
 reset location =
-    Ansi.Internal.toAnsiCommand
+    Ansi.Internal.toCommand
         ((case location of
             Foreground ->
                 "39"

@@ -44,79 +44,79 @@ import Ansi.Internal
 -}
 moveUpBy : Int -> String
 moveUpBy amount =
-    Ansi.Internal.toAnsiCommand (String.fromInt amount ++ "A")
+    Ansi.Internal.toCommand (String.fromInt amount ++ "A")
 
 
 {-| Move the cursor down N lines
 -}
 moveDownBy : Int -> String
 moveDownBy amount =
-    Ansi.Internal.toAnsiCommand (String.fromInt amount ++ "B")
+    Ansi.Internal.toCommand (String.fromInt amount ++ "B")
 
 
 {-| Move the cursor forward N columns. In an LTR language this is to the right and in an RTL language it's to the left.
 -}
 moveForwardBy : Int -> String
 moveForwardBy amount =
-    Ansi.Internal.toAnsiCommand (String.fromInt amount ++ "C")
+    Ansi.Internal.toCommand (String.fromInt amount ++ "C")
 
 
 {-| Move the cursor forward N columns. In an LTR language this is to the left and in an RTL language it's to the right.
 -}
 moveBackwardBy : Int -> String
 moveBackwardBy amount =
-    Ansi.Internal.toAnsiCommand (String.fromInt amount ++ "D")
+    Ansi.Internal.toCommand (String.fromInt amount ++ "D")
 
 
 {-| -}
 moveForwardLines : Int -> String
 moveForwardLines amount =
-    Ansi.Internal.toAnsiCommand (String.fromInt amount ++ "E")
+    Ansi.Internal.toCommand (String.fromInt amount ++ "E")
 
 
 {-| -}
 moveBackwardLines : Int -> String
 moveBackwardLines amount =
-    Ansi.Internal.toAnsiCommand (String.fromInt amount ++ "F")
+    Ansi.Internal.toCommand (String.fromInt amount ++ "F")
 
 
 {-| Move the cursor to the specified column
 -}
 moveToColumn : Int -> String
 moveToColumn amount =
-    Ansi.Internal.toAnsiCommand (String.fromInt amount ++ "G")
+    Ansi.Internal.toCommand (String.fromInt amount ++ "G")
 
 
 {-| Move the cursor to the specified row and column
 -}
 moveTo : { row : Int, column : Int } -> String
 moveTo to =
-    Ansi.Internal.toAnsiCommand (String.fromInt to.row ++ ";" ++ String.fromInt to.column ++ "H")
+    Ansi.Internal.toCommand (String.fromInt to.row ++ ";" ++ String.fromInt to.column ++ "H")
 
 
 {-| Save the cursor's position
 -}
 savePosition : String
 savePosition =
-    Ansi.Internal.toAnsiCommand "s"
+    Ansi.Internal.toCommand "s"
 
 
 {-| Move the cursor back to the last saved position
 -}
 restorePosition : String
 restorePosition =
-    Ansi.Internal.toAnsiCommand "u"
+    Ansi.Internal.toCommand "u"
 
 
 {-| Hide the cursor
 -}
 hide : String
 hide =
-    Ansi.Internal.toAnsiCommand "?25l"
+    Ansi.Internal.toCommand "?25l"
 
 
 {-| Show the cursor if it was hidden
 -}
 show : String
 show =
-    Ansi.Internal.toAnsiCommand "?25h"
+    Ansi.Internal.toCommand "?25h"

@@ -4,8 +4,8 @@ import Bitwise
 import Regex
 
 
-toAnsiCommand : String -> String
-toAnsiCommand str =
+toCommand : String -> String
+toCommand str =
     commandStr ++ str
 
 

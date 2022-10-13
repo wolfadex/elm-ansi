@@ -12,7 +12,7 @@ module Ansi exposing
     , scrollDownBy
     , regex
     , emojiRegex
-    , getCommand, isDownArrow, isLeftArrow, isRightArrow, isUpArrow
+    , getCommand, isDownArrow, isLeftArrow, isRightArrow, isUpArrow, setTitle
     )
 
 {-| When building for the terminal we have 3 layers of abstraction. This package represents the bottom most layer. With the functions provided here you can manipulate each character within the terminal with minute control.
@@ -59,77 +59,77 @@ import Regex exposing (Regex)
 -}
 backgroundColor : Color -> String
 backgroundColor c =
-    Ansi.Internal.toAnsiCommand (Ansi.Color.encode Background c)
+    Ansi.Internal.toCommand (Ansi.Color.encode Background c)
 
 
 {-| Clears all of the screen
 -}
 clearScreen : String
 clearScreen =
-    Ansi.Internal.toAnsiCommand "2J"
+    Ansi.Internal.toCommand "2J"
 
 
 {-| Clears the screen from the cursor up
 -}
 clearUp : String
 clearUp =
-    Ansi.Internal.toAnsiCommand "1J"
+    Ansi.Internal.toCommand "1J"
 
 
 {-| Clears the screen from the cursor down
 -}
 clearDown : String
 clearDown =
-    Ansi.Internal.toAnsiCommand "J"
+    Ansi.Internal.toCommand "J"
 
 
 {-| Clears the line the cursor is on
 -}
 clearLine : String
 clearLine =
-    Ansi.Internal.toAnsiCommand "2K"
+    Ansi.Internal.toCommand "2K"
 
 
 {-| Clears the line from the cursor to the end
 -}
 clearLineAfter : String
 clearLineAfter =
-    Ansi.Internal.toAnsiCommand "K"
+    Ansi.Internal.toCommand "K"
 
 
 {-| Clears the line from the beginning through the cursor
 -}
 clearLineBefore : String
 clearLineBefore =
-    Ansi.Internal.toAnsiCommand "1K"
+    Ansi.Internal.toCommand "1K"
 
 
 {-| Scrolls the terminal up
 -}
 scrollUpBy : Int -> String
 scrollUpBy amount =
-    Ansi.Internal.toAnsiCommand (String.fromInt amount ++ "L")
+    Ansi.Internal.toCommand (String.fromInt amount ++ "L")
 
 
 {-| Scrolls the terminal down
 -}
 scrollDownBy : Int -> String
 scrollDownBy amount =
-    Ansi.Internal.toAnsiCommand (String.fromInt amount ++ "M")
+    Ansi.Internal.toCommand (String.fromInt amount ++ "M")
 
 
 {-| Save the current position of the cursor
 -}
 saveScreen : String
 saveScreen =
-    Ansi.Internal.toAnsiCommand "?47h"
+    Ansi.Internal.toCommand "?47h"
 
 
 {-| Restore the position of the cursor to the last saved state
 -}
 restoreScreen : String
 restoreScreen =
-    Ansi.Internal.toAnsiCommand "?47l"
+    Ansi.Internal.toCommand "?47l"
 
 
 {-| If the input is an ansi command, return the command portion, with the escape code removed.
@@ -185,6 +185,12 @@ isLeftArrow str =
 
         _ ->
             False
+
+
+{-| -}
+setTitle : String -> String
+setTitle title =
+    "\u{001B}]0;" ++ title ++ "\u{0007}"
 
 
 {-| Matches regex characters
