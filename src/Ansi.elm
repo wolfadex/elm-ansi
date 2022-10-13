@@ -12,7 +12,7 @@ module Ansi exposing
     , scrollDownBy
     , regex
     , emojiRegex
-    , getCommand, isDownArrow, isLeftArrow, isRightArrow, isUpArrow, setTitle
+    , Key, decodeKey, getCommand, isDownArrow, isLeftArrow, isRightArrow, isUpArrow, setTitle
     )
 
 {-| When building for the terminal we have 3 layers of abstraction. This package represents the bottom most layer. With the functions provided here you can manipulate each character within the terminal with minute control.
@@ -52,6 +52,7 @@ module Ansi exposing
 
 import Ansi.Color exposing (Color, Location(..))
 import Ansi.Internal
+import Json.Decode exposing (Decoder)
 import Regex exposing (Regex)
 
 
@@ -191,6 +192,29 @@ isLeftArrow str =
 setTitle : String -> String
 setTitle title =
     "\u{001B}]0;" ++ title ++ "\u{0007}"
+
+
+{-| -}
+type alias Key =
+    { code : Maybe String
+    , ctrl : Bool
+    , meta : Bool
+    , name : String
+    , sequence : String
+    , shift : Bool
+    }
+
+
+{-| -}
+decodeKey : Decoder Key
+decodeKey =
+    Json.Decode.map6 Key
+        (Json.Decode.maybe (Json.Decode.field "code" Json.Decode.string))
+        (Json.Decode.field "ctrl" Json.Decode.bool)
+        (Json.Decode.field "meta" Json.Decode.bool)
+        (Json.Decode.field "name" Json.Decode.string)
+        (Json.Decode.field "sequence" Json.Decode.string)
+        (Json.Decode.field "shift" Json.Decode.bool)
 
 
 {-| Matches regex characters
