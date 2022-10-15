@@ -35,7 +35,7 @@ import Ink.Internal exposing (Attribute(..))
 color : Color -> Attribute
 color c =
     Style
-        (Ansi.Color.encode Foreground c |> Ansi.Internal.toAnsiCommand)
+        (Ansi.Color.encode Foreground c |> Ansi.Internal.toCommand)
         (Ansi.Color.reset Foreground)
 
 
@@ -44,7 +44,7 @@ color c =
 backgroundColor : Color -> Attribute
 backgroundColor c =
     Style
-        (Ansi.Color.encode Background c |> Ansi.Internal.toAnsiCommand)
+        (Ansi.Color.encode Background c |> Ansi.Internal.toCommand)
         (Ansi.Color.reset Background)
 
 
