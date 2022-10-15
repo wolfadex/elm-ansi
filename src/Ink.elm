@@ -86,7 +86,7 @@ toString config element =
     Ansi.Font.resetAll
         ++ Ansi.Cursor.hide
         ++ Ansi.clearScreen
-        ++ Ansi.Cursor.moveTo { row = 0, column = 0 }
+        ++ Ansi.Cursor.moveTo { row = 1, column = 1 }
         ++ viewHelper
             { column = 0
             , row = 0

@@ -63,7 +63,7 @@ render model =
     ( model
     , [ Ansi.Font.resetAll
       , Ansi.clearScreen
-      , Ansi.Cursor.moveTo { row = 0, column = 0 }
+      , Ansi.Cursor.moveTo { row = 1, column = 1 }
       , "🌈  Welcome to Elm Land! " ++ Ansi.Font.faint ++ "1.2.3" ++ Ansi.Font.resetBoldFaint
       , Ansi.Font.color Ansi.Color.green ++ "    " ++ String.repeat (24 + 3) "⎺" ++ Ansi.Color.reset Foreground
       , ""
