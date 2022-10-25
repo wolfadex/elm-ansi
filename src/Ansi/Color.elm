@@ -18,9 +18,25 @@ module Ansi.Color exposing
     , yellow
     )
 
-{-| For creating colors for your terminal.
+{-| For coloring either the font or the background.
 
-TODO: Support converting to/from different color depths. Currently only support TrueColor
+@docs Color
+@docs Depth
+@docs Location
+@docs black
+@docs blue
+@docs cyan
+@docs decodeDepth
+@docs encode
+@docs fromHtmlColor
+@docs green
+@docs magenta
+@docs red
+@docs reset
+@docs rgb
+@docs toHtmlColor
+@docs white
+@docs yellow
 
 -}
 
@@ -36,6 +52,11 @@ import Json.Decode exposing (Decoder)
 -- 24 for 16,777,216 colors supported.
 
 
+{-| **TODO:** Currently only supports TrueColor.
+
+There is work to be able to convert between different color depths
+
+-}
 type Depth
     = NoColor
     | Colors16
@@ -43,6 +64,7 @@ type Depth
     | TrueColor
 
 
+{-| -}
 decodeDepth : Decoder Depth
 decodeDepth =
     Json.Decode.int
@@ -66,11 +88,14 @@ decodeDepth =
             )
 
 
+{-| -}
 type Location
     = Foreground
     | Background
 
 
+{-| Convert from [avh4/elm-color](https://package.elm-lang.org/packages/avh4/elm-color/latest/) to an ANSI color
+-}
 fromHtmlColor : HtmlColor.Color -> Color
 fromHtmlColor c =
     let
@@ -90,6 +115,8 @@ floatToInt f =
     ceiling (255 * f)
 
 
+{-| Convert from an ANSI color to [avh4/elm-color](https://package.elm-lang.org/packages/avh4/elm-color/latest/)
+-}
 toHtmlColor : Color -> HtmlColor.Color
 toHtmlColor (Color c) =
     HtmlColor.fromRgba
@@ -100,11 +127,13 @@ toHtmlColor (Color c) =
         }
 
 
+{-| -}
 intToFloat : Int -> Float
 intToFloat i =
     toFloat i / 255
 
 
+{-| -}
 type Color
     = Color
         { red : Int
@@ -113,6 +142,7 @@ type Color
         }
 
 
+{-| -}
 encode : Location -> Color -> String
 encode location (Color col) =
     [ encodeLocation location, 2, col.red, col.green, col.blue ]
@@ -131,41 +161,49 @@ encodeLocation loc =
             48
 
 
+{-| -}
 black : Color
 black =
     Color { red = 0, green = 0, blue = 0 }
 
 
+{-| -}
 red : Color
 red =
     Color { red = 255, green = 0, blue = 0 }
 
 
+{-| -}
 green : Color
 green =
     Color { red = 0, green = 255, blue = 0 }
 
 
+{-| -}
 yellow : Color
 yellow =
     Color { red = 255, green = 255, blue = 0 }
 
 
+{-| -}
 blue : Color
 blue =
     Color { red = 0, green = 0, blue = 255 }
 
 
+{-| -}
 magenta : Color
 magenta =
     Color { red = 255, green = 0, blue = 255 }
 
 
+{-| -}
 cyan : Color
 cyan =
     Color { red = 0, green = 255, blue = 255 }
 
 
+{-| -}
 white : Color
 white =
     Color { red = 255, green = 255, blue = 255 }
@@ -178,6 +216,7 @@ rgb opts =
     Color { red = opts.red, blue = opts.blue, green = opts.green }
 
 
+{-| -}
 reset : Location -> String
 reset location =
     Ansi.Internal.toCommand

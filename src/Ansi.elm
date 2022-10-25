@@ -12,7 +12,14 @@ module Ansi exposing
     , scrollDownBy
     , regex
     , emojiRegex
-    , Key, decodeKey, getCommand, isDownArrow, isLeftArrow, isRightArrow, isUpArrow, setTitle
+    , Key
+    , decodeKey
+    , getCommand
+    , isDownArrow
+    , isLeftArrow
+    , isRightArrow
+    , isUpArrow
+    , setTitle
     )
 
 {-| When building for the terminal we have 3 layers of abstraction. This package represents the bottom most layer. With the functions provided here you can manipulate each character within the terminal with minute control.
@@ -45,6 +52,22 @@ module Ansi exposing
 
 @docs regex
 @docs emojiRegex
+
+
+## Parsing & Querying
+
+@docs Key
+@docs decodeKey
+@docs getCommand
+@docs isDownArrow
+@docs isLeftArrow
+@docs isRightArrow
+@docs isUpArrow
+
+
+## Other
+
+@docs setTitle
 
 -}
 
@@ -188,7 +211,8 @@ isLeftArrow str =
             False
 
 
-{-| -}
+{-| Sets the title of the terminal
+-}
 setTitle : String -> String
 setTitle title =
     "\u{001B}]0;" ++ title ++ "\u{0007}"
@@ -205,7 +229,8 @@ type alias Key =
     }
 
 
-{-| -}
+{-| You can configure Node to listen for key events, this will parse those into a nice record.
+-}
 decodeKey : Decoder Key
 decodeKey =
     Json.Decode.map6 Key
