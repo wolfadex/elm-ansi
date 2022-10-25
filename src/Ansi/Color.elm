@@ -1,40 +1,51 @@
 module Ansi.Color exposing
     ( Color
     , Location(..)
+    , encode
+    , reset
     , black
     , blue
     , cyan
-    , encode
-    , fromHtmlColor
     , green
     , magenta
     , red
-    , reset
-    , rgb
-    , toHtmlColor
     , white
     , yellow
+    , rgb
+    , fromHtmlColor
+    , toHtmlColor
     )
 
 {-| For coloring either the font or the background.
 
 @docs Color
-@docs Depth
 @docs Location
+
+@docs encode
+@docs reset
+
+
+## Basics
+
 @docs black
 @docs blue
 @docs cyan
-@docs decodeDepth
-@docs encode
-@docs fromHtmlColor
 @docs green
 @docs magenta
 @docs red
-@docs reset
-@docs rgb
-@docs toHtmlColor
 @docs white
 @docs yellow
+
+
+## Custom
+
+@docs rgb
+
+
+## Converting from/to HTML colors
+
+@docs fromHtmlColor
+@docs toHtmlColor
 
 -}
 
@@ -76,7 +87,8 @@ import Color as HtmlColor
 --             )
 
 
-{-| Whether the color is applied to the `Font` or the `Background` -}
+{-| Whether the color is applied to the `Font` or the `Background`
+-}
 type Location
     = Font
     | Background
@@ -130,7 +142,8 @@ type Color
         }
 
 
-{-| -}
+{-| Encode the color to a `String` for printing to the terminal
+-}
 encode : Location -> Color -> String
 encode location (Color col) =
     [ encodeLocation location, 2, col.red, col.green, col.blue ]

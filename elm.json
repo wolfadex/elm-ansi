@@ -1,26 +1,26 @@
 {
-    "type": "package",
-    "name": "wolfadex/elm-ansi",
-    "summary": "Function and types to make it easy to work with ASNI codes",
-    "license": "BSD-3-Clause",
-    "version": "1.0.0",
-    "exposed-modules": [
-        "Ansi",
-        "Ansi.Box",
-        "Ansi.Color",
-        "Ansi.Cursor",
-        "Ansi.Font",
-        "Ansi.String",
-        "Terminal"
-    ],
-    "elm-version": "0.19.0 <= v < 0.20.0",
-    "dependencies": {
-        "avh4/elm-color": "1.0.0 <= v < 2.0.0",
-        "elm/core": "1.0.5 <= v < 2.0.0",
-        "elm/json": "1.1.3 <= v < 2.0.0",
-        "elm/regex": "1.0.0 <= v < 2.0.0"
-    },
-    "test-dependencies": {
-        "elm-explorations/test": "1.2.2 <= v < 2.0.0"
-    }
+  "type": "package",
+  "name": "wolfadex/elm-ansi",
+  "summary": "Function and types to make it easy to work with ASNI codes",
+  "license": "BSD-3-Clause",
+  "version": "1.0.0",
+  "exposed-modules": [
+    "Ansi",
+    "Ansi.Color",
+    "Ansi.Cursor",
+    "Ansi.Font",
+    "Ansi.String",
+    "Terminal",
+    "Terminal.Box"
+  ],
+  "elm-version": "0.19.0 <= v < 0.20.0",
+  "dependencies": {
+    "avh4/elm-color": "1.0.0 <= v < 2.0.0",
+    "elm/core": "1.0.5 <= v < 2.0.0",
+    "elm/json": "1.1.3 <= v < 2.0.0",
+    "elm/regex": "1.0.0 <= v < 2.0.0"
+  },
+  "test-dependencies": {
+    "elm-explorations/test": "1.2.2 <= v < 2.0.0"
+  }
 }

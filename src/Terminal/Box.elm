@@ -6,9 +6,9 @@ module Terminal.Box exposing
     , classic
     , custom
     , doubleSingle
-    , draw
     , rounded
     , singleDouble
+    , draw
     )
 
 {-| Styles borrowed from <https://www.npmjs.com/package/cli-boxes>
@@ -21,15 +21,17 @@ module Terminal.Box exposing
 @docs classic
 @docs custom
 @docs doubleSingle
-@docs draw
 @docs rounded
 @docs singleDouble
+
+@docs draw
 
 -}
 
 import Ansi.Cursor
 
 
+{-| -}
 type alias Box =
     { topLeft : String
     , top : String
@@ -214,6 +216,8 @@ custom options =
     }
 
 
+{-| Helps to draw the box for you
+-}
 draw : { width : Int, height : Int } -> Box -> String
 draw dimensions style =
     [ style.topLeft

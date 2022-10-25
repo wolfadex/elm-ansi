@@ -11,7 +11,7 @@ module Terminal exposing
     , blink
     )
 
-{-|
+{-| Helpers for drawing boxes
 
 
 ## Color
