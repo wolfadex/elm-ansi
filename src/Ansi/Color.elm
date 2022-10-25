@@ -25,7 +25,6 @@ TODO: Support converting to/from different color depths. Currently only support 
 -}
 
 import Ansi.Internal
-import Browser exposing (UrlRequest(..))
 import Color as HtmlColor
 import Json.Decode exposing (Decoder)
 
