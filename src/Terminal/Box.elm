@@ -2,12 +2,12 @@ module Terminal.Box exposing
     ( Box
     , single
     , double
+    , singleDouble
+    , doubleSingle
     , bold
     , classic
-    , custom
-    , doubleSingle
     , rounded
-    , singleDouble
+    , custom
     , draw
     )
 
@@ -17,12 +17,12 @@ module Terminal.Box exposing
 
 @docs single
 @docs double
+@docs singleDouble
+@docs doubleSingle
 @docs bold
 @docs classic
-@docs custom
-@docs doubleSingle
 @docs rounded
-@docs singleDouble
+@docs custom
 
 @docs draw
 
@@ -46,9 +46,9 @@ type alias Box =
 
 {-| A thin box with sharp corners
 
-┌────┐
-│ sl │
-└────┘
+    ┌────┐
+    │    │
+    └────┘
 
 -}
 single : Box
@@ -66,9 +66,9 @@ single =
 
 {-| 2 thin, nested boxes with sharp corners
 
-╔════╗
-║ db ║
-╚════╝
+    ╔════╗
+    ║    ║
+    ╚════╝
 
 -}
 double : Box
@@ -86,9 +86,9 @@ double =
 
 {-| A thin box with rounded corners
 
-╭────╮
-│ rd │
-╰────╯
+    ╭────╮
+    │    │
+    ╰────╯
 
 -}
 rounded : Box
@@ -106,9 +106,9 @@ rounded =
 
 {-| A thick box with sharp corners
 
-┏━━━━┓
-┃ bd ┃
-┗━━━━┛
+    ┏━━━━┓
+    ┃    ┃
+    ┗━━━━┛
 
 -}
 bold : Box
@@ -126,9 +126,9 @@ bold =
 
 {-| A box with sharp corners, thin on the top and bottom and doubled up on the sides
 
-╓────╖
-║ sd ║
-╙────╜
+    ╓────╖
+    ║    ║
+    ╙────╜
 
 -}
 singleDouble : Box
@@ -146,9 +146,9 @@ singleDouble =
 
 {-| A box with sharp corners, thin on the sides and doubled on top and bottom
 
-╒════╕
-│ ds │
-╘════╛
+    ╒════╕
+    │    │
+    ╘════╛
 
 -}
 doubleSingle : Box
@@ -166,9 +166,9 @@ doubleSingle =
 
 {-| A thin box with plus shaped corners
 
-+----+
-| cs |
-+----+
+    +----+
+    |    |
+    +----+
 
 -}
 classic : Box
@@ -184,13 +184,14 @@ classic =
     }
 
 
-{-| Design your own box, suash as
+{-| Design your own box, such as
 
-•————•
-∫ cm ∫
-•————•
+    •————•
+    ∫    ∫
+    •————•
 
-TODO: This may cause issues
+This can break layout when you use `Char`s that have a width greater than 1.
+E.g. 🌈 is 2 columns wide.
 
 -}
 custom :
