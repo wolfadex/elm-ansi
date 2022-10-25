@@ -24,7 +24,7 @@ color : Color -> Attribute
 color c =
     BorderFontStyle
         (Ansi.Color.encode Font c |> Ansi.Internal.toCommand)
-        (Ansi.Color.reset Font)
+        (Ansi.Color.end Font)
 
 
 {-| Set the color behind your border. See `Ansi.Color` for colors.
@@ -33,4 +33,4 @@ backgroundColor : Color -> Attribute
 backgroundColor c =
     BorderFontStyle
         (Ansi.Color.encode Font c |> Ansi.Internal.toCommand)
-        (Ansi.Color.reset Font)
+        (Ansi.Color.end Font)

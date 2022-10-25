@@ -5,12 +5,13 @@
   "license": "BSD-3-Clause",
   "version": "1.0.0",
   "exposed-modules": [
+    "Ansi.Color",
+    "Ansi.Font",
     "Ansi",
     "Ansi.Box",
-    "Ansi.Color",
     "Ansi.Cursor",
-    "Ansi.Font",
-    "Ansi.String"
+    "Ansi.String",
+    "Ansi.Parse"
   ],
   "elm-version": "0.19.0 <= v < 0.20.0",
   "dependencies": {

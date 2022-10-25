@@ -1,37 +1,59 @@
 module Ansi.Font exposing
     ( bold
     , faint
-    , resetBoldFaint
     , italic
-    , resetItalic
     , underline
-    , resetUnderline
     , strikeThrough
-    , resetStrikeThrough
+    , startBold
+    , startFaint
+    , endBoldFaint
+    , startItalic
+    , endItalic
+    , startUnderline
+    , endUnderline
+    , startStrikeThrough
+    , endStrikeThrough
     , resetAll
     , hide
     , show
-    , blink
-    , resetBlink
+    , startBlink
+    , endBlink
     )
 
-{-| When styling your terminal there are 2 sets of commands, those that add the style and those that remove it. This does make this a little more difficult to use as you have to remember to reset each style when you no longer want it applied. It does however let you mix and match styles however you want.
+{-| When styling your terminal there are 2 sets of commands, those that add the style and those that remove it. This does make this a little more difficult to use as you have to remember to reset each style when you no longer want it applied. It does however let you mix and match styles however you want. For example
+
+    Ansi.Font.startItalic ++ "Hello, " ++ Ansi.Font.startBold ++ "World" ++ Ansi.Font.endBold ++ "!" ++ Ansi.Font.endItalic
+
+produces "_Hello, **World**!_". However most people don't need this fine grained of control. If you want simpler functions I recommend
+
+    Ansi.Font.italic ("Hello, " ++ Ansi.Font.bold "World" ++ "!")
+
+which produces the same result.
 
 
-## Style
+## Shorthand Styling
 
 @docs bold
 @docs faint
-@docs resetBoldFaint
-
 @docs italic
-@docs resetItalic
-
 @docs underline
-@docs resetUnderline
-
 @docs strikeThrough
-@docs resetStrikeThrough
+
+
+## Explicit Styling
+
+@docs startBold
+@docs startFaint
+@docs endBoldFaint
+
+@docs startItalic
+@docs endItalic
+
+@docs startUnderline
+@docs endUnderline
+
+@docs startStrikeThrough
+@docs endStrikeThrough
 
 @docs resetAll
 
@@ -42,12 +64,12 @@ module Ansi.Font exposing
 @docs show
 
 
-## Unsupported
+## Limited Support
 
 These have some limited support but it varies greatly by terminal
 
-@docs blink
-@docs resetBlink
+@docs startBlink
+@docs endBlink
 
 -}
 
@@ -61,57 +83,57 @@ resetAll =
 
 
 {-| -}
-bold : String
-bold =
+startBold : String
+startBold =
     Ansi.Internal.toCommand "1m"
 
 
 {-| The opposite of bold
 -}
-faint : String
-faint =
+startFaint : String
+startFaint =
     Ansi.Internal.toCommand "2m"
 
 
 {-| -}
-resetBoldFaint : String
-resetBoldFaint =
+endBoldFaint : String
+endBoldFaint =
     Ansi.Internal.toCommand "22m"
 
 
 {-| -}
-italic : String
-italic =
+startItalic : String
+startItalic =
     Ansi.Internal.toCommand "3m"
 
 
 {-| -}
-resetItalic : String
-resetItalic =
+endItalic : String
+endItalic =
     Ansi.Internal.toCommand "23m"
 
 
 {-| -}
-underline : String
-underline =
+startUnderline : String
+startUnderline =
     Ansi.Internal.toCommand "4m"
 
 
 {-| -}
-resetUnderline : String
-resetUnderline =
+endUnderline : String
+endUnderline =
     Ansi.Internal.toCommand "24m"
 
 
 {-| -}
-blink : String
-blink =
+startBlink : String
+startBlink =
     Ansi.Internal.toCommand "5m"
 
 
 {-| -}
-resetBlink : String
-resetBlink =
+endBlink : String
+endBlink =
     Ansi.Internal.toCommand "25m"
 
 
@@ -128,12 +150,54 @@ show =
 
 
 {-| -}
-strikeThrough : String
-strikeThrough =
+startStrikeThrough : String
+startStrikeThrough =
     Ansi.Internal.toCommand "9m"
 
 
 {-| -}
-resetStrikeThrough : String
-resetStrikeThrough =
+endStrikeThrough : String
+endStrikeThrough =
     Ansi.Internal.toCommand "29m"
+
+
+
+---- CONVENIENCE FUNCTIONS ----
+
+
+{-| -}
+bold : String -> String
+bold str =
+    startBold ++ str ++ endBoldFaint
+
+
+{-| The opposite of bold
+-}
+faint : String -> String
+faint str =
+    startFaint ++ str ++ endBoldFaint
+
+
+{-| -}
+italic : String -> String
+italic str =
+    startItalic ++ str ++ endItalic
+
+
+{-| -}
+underline : String -> String
+underline str =
+    startUnderline ++ str ++ endUnderline
+
+
+{-| -}
+strikeThrough : String -> String
+strikeThrough str =
+    startStrikeThrough ++ str ++ endStrikeThrough
+
+
+{-| Not supported by some terminals
+-}
+blink : String -> String
+blink str =
+    startBlink ++ str ++ endBlink

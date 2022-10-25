@@ -26,19 +26,27 @@ init () =
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.none
+    stdin Stdin
 
+port stdin : (String -> msg) -> Sub msg
 
 port stdout : String -> Cmd msg
 
+port exit : Int -> Cmd msg
+
 
 type Msg
-    = NoOp
+    = Stdin String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update _ _ =
-    render ()
+update (Stdin input) _ =
+    -- ESC or Ctrl+C
+    if input == "\u{001B}" || input == "\u{0003}" then
+        ( (), exit 0 )
+
+    else
+        render ()
 
 
 render : Model -> ( Model, Cmd Msg )
@@ -47,13 +55,13 @@ render model =
     , [ Ansi.Font.resetAll
       , Ansi.clearScreen
       , Ansi.Cursor.moveTo { row = 1, column = 1 }
-      , "🌈  Welcome to Elm Land! " ++ Ansi.faint "1.2.3"
-      , Ansi.fontColor Ansi.Color.green ("    " ++ String.repeat (24 + 3) "⎺")
+      , "🌈  Welcome to Elm Land! " ++ Ansi.Font.faint "1.2.3"
+      , Ansi.Color.fontColor Ansi.Color.green ("    " ++ String.repeat (24 + 3) "⎺")
       , ""
       ]
         ++ subcommandList
         ++ [ ""
-           , "    Want to learn more? Visit " ++ Ansi.fontColor Ansi.Color.cyan "https://elm.land/guide"
+           , "    Want to learn more? Visit " ++ Ansi.Color.fontColor Ansi.Color.cyan "https://elm.land/guide"
            ]
         |> String.join "\n"
         |> stdout
@@ -76,7 +84,7 @@ subcommandList =
 elmLandCommand : String -> String -> String -> String
 elmLandCommand emoji cmd desc =
     [ "    " ++ emoji ++ " elm-land"
-    , Ansi.fontColor pink cmd
+    , Ansi.Color.fontColor pink cmd
     , desc
     ]
         |> String.join " "

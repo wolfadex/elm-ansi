@@ -1,10 +1,7 @@
 module Ansi.Color exposing
-    ( Color
-    , Location(..)
-    , set
-    , reset
+    ( fontColor
+    , backgroundColor
     , invert
-    , resetInvert
     , black
     , blue
     , cyan
@@ -16,20 +13,25 @@ module Ansi.Color exposing
     , rgb
     , fromHtmlColor
     , toHtmlColor
+    , Color
+    , Location(..)
+    , start
+    , end
+    , startInvert
+    , endInvert
     )
 
 {-| For coloring either the font or the background.
 
-@docs Color
-@docs Location
 
-@docs set
-@docs reset
+## Shorthand
+
+@docs fontColor
+@docs backgroundColor
 @docs invert
-@docs resetInvert
 
 
-## Basics
+## Basic Colors
 
 @docs black
 @docs blue
@@ -41,7 +43,7 @@ module Ansi.Color exposing
 @docs yellow
 
 
-## Custom
+## Custom Color
 
 @docs rgb
 
@@ -50,6 +52,17 @@ module Ansi.Color exposing
 
 @docs fromHtmlColor
 @docs toHtmlColor
+
+
+## Explicit
+
+@docs Color
+@docs Location
+
+@docs start
+@docs end
+@docs startInvert
+@docs endInvert
 
 -}
 
@@ -146,10 +159,10 @@ type Color
         }
 
 
-{-| Set the color for the text or background
+{-| Set the color for the following text or background
 -}
-set : Location -> Color -> String
-set location (Color col) =
+start : Location -> Color -> String
+start location (Color col) =
     [ encodeLocation location, 2, col.red, col.green, col.blue ]
         |> List.map String.fromInt
         |> String.join ";"
@@ -224,8 +237,8 @@ rgb opts =
 
 {-| Reset to the terminal's default color
 -}
-reset : Location -> String
-reset location =
+end : Location -> String
+end location =
     Ansi.Internal.toCommand
         ((case location of
             Font ->
@@ -240,13 +253,38 @@ reset location =
 
 {-| Flip the font and background colors
 -}
-invert : String
-invert =
+startInvert : String
+startInvert =
     Ansi.Internal.toCommand "7m"
 
 
 {-| Unflip the font and background colors
 -}
-resetInvert : String
-resetInvert =
+endInvert : String
+endInvert =
     Ansi.Internal.toCommand "27m"
+
+
+
+---- CONVENIENCE FUNCTIONS ----
+
+
+{-| Swaps the font and background colors
+-}
+invert : String -> String
+invert str =
+    startInvert ++ str ++ endInvert
+
+
+{-| Sets the color of the text
+-}
+fontColor : Color -> String -> String
+fontColor c str =
+    start Font c ++ str ++ end Font
+
+
+{-| Sets the color behind the text
+-}
+backgroundColor : Color -> String -> String
+backgroundColor c str =
+    start Background c ++ str ++ end Background

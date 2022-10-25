@@ -21,7 +21,7 @@ commandStr =
 
 
 
--- Below borrowed from https://github.com/komagata/eastasianwidth/blob/master/eastasianwidth.jshttps://github.com/komagata/eastasianwidth/blob/master/eastasianwidth.js
+-- Below borrowed from https://github.com/komagata/eastasianwidth/blob/master/eastasianwidth.js
 
 
 type EastAsianCharWidth

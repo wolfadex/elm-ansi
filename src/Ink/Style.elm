@@ -36,7 +36,7 @@ color : Color -> Attribute
 color c =
     Style
         (Ansi.Color.encode Font c |> Ansi.Internal.toCommand)
-        (Ansi.Color.reset Font)
+        (Ansi.Color.end Font)
 
 
 {-| Set the color behind your text. See `Ansi.Color` for colors.
@@ -45,25 +45,25 @@ backgroundColor : Color -> Attribute
 backgroundColor c =
     Style
         (Ansi.Color.encode Background c |> Ansi.Internal.toCommand)
-        (Ansi.Color.reset Background)
+        (Ansi.Color.end Background)
 
 
 {-| Makes the text more bold.
 -}
 bold : Attribute
 bold =
-    Style Ansi.Font.bold Ansi.Font.resetBoldFaint
+    Style Ansi.Font.startBold Ansi.Font.endBoldFaint
 
 
 {-| Makes the text less bold.
 -}
 faint : Attribute
 faint =
-    Style Ansi.Font.faint Ansi.Font.resetBoldFaint
+    Style Ansi.Font.startFaint Ansi.Font.endBoldFaint
 
 
 {-| Makes the text italic.
 -}
 italic : Attribute
 italic =
-    Style Ansi.Font.italic Ansi.Font.resetBoldFaint
+    Style Ansi.Font.startItalic Ansi.Font.endBoldFaint

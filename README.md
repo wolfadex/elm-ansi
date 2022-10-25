@@ -6,47 +6,53 @@ A low-level package for text formatting and layout for your terminal.
 
 This package is meant as a building block for more expressive packages. You can think of it like [elm/virtual-dom](https://package.elm-lang.org/packages/elm/virtual-dom/latest/) for [elm/html](https://package.elm-lang.org/packages/elm/html/latest/) and [mdgriffith/elm-ui](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/).
 
-## Examples
+## Basic Example
 
 ```elm
-import Ansi.Font
+port module Main exposing (..)
 
-phrase : String
-phrase =
-    "Hello, "
-        ++ Ansi.Font.bold
-        ++ "world"
-        ++ Ansi.Font.resetBoldFaint
-        ++ "!
+import Ansi
+import Ansi.Cursor
+import Ansi.Font
+import Platform
+
+
+init _ =
+    ( ()
+    , [ Ansi.Font.resetAll
+      , Ansi.clearScreen
+      , Ansi.Cursor.moveTo { row = 1, column = 1 }
+      , "🌈 Hello, " ++ Ansi.Font.bold "world" ++ "!"
+      ]
+        |> String.concat
+        |> stdout
+    )
+
+
+stdout : String -> Cmd msg
+
+
+main =
+    Platform.worker
+        { init = init
+        , subscriptions = \_ -> Sub.none
+        , update = \_ model -> ( model, Cmd.none )
+        }
 ```
 
 if printed to a terminal would give you
 
-> Hello, **World**!
+> 🌈 Hello, **World**!
 
-This can be made slightly easier by using the `Ansi` helper functions
+Walking through this step-by-step:
 
-```elm
-import Ansi
+1. With `Ansi.Font.resetAll` we reset all of the font settings, removing and styles that might be left over.
+1. Then we use `Ansi.clearScreen` to, clear the screen.
+1. At this point our cursor is still wherever we left it so we move it to the top left most corner with `Ansi.Cursor.moveTo { row = 1, column = 1 }`.
+1. Now we can finally start drawing our content! We want to write out `"🌈 Hello, World!"`, but we also want to make `World` bold.
+1. Finally we join all of this together and send it out through a port!
 
-phrase : String
-phrase =
-    "Hello, " ++ Ansi.bold "world" ++ "!
-```
-
-which if printed to a terminal would also give you
-
-> Hello, **World**!
-
-## Run Examples
-
-To compile an example, run `npm run:<example name>`, e.g.
-
-- `npm run example:ansi`
-
-To run a compiled example, run `node example/dist-<example name>.js`, e.g.
-
-- Run `node example/dist/example-ansi.js` to view the Ansi demo
+For more complete example including handling input, checkout the examples directory [in the repo](https://github.com/wolfadex/elm-ansi).
 
 ---
 
@@ -58,6 +64,6 @@ To run a compiled example, run `node example/dist-<example name>.js`, e.g.
 
 or
 
-- Install [Node](https://nodejs.org/en/) and [ELm](https://elm-lang.org/)
+- Install [Node.js](https://nodejs.org/en/) and [Em](https://elm-lang.org/)
 - Clone this repo
 - Inside the cloned repo, run `npm install`
