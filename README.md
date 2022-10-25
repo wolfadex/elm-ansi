@@ -4,7 +4,7 @@ A low-level package for text formatting and layout for your terminal.
 
 ## Who is this for?
 
-This package is meant as a building block for more expressive packages. You can think of it like `elm/virtual-dom` for `elm/html` and `mdgriffith/elm-ui`.
+This package is meant as a building block for more expressive packages. You can think of it like [elm/virtual-dom](https://package.elm-lang.org/packages/elm/virtual-dom/latest/) for [elm/html](https://package.elm-lang.org/packages/elm/html/latest/) and [mdgriffith/elm-ui](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/).
 
 ## Examples
 
@@ -52,6 +52,12 @@ To run a compiled example, run `node example/dist-<example name>.js`, e.g.
 
 ## Contributing
 
-- Make sure you have both `Nix` and `direnv` installed
+- Install [Nix](https://nixos.org/download.html) and [direnv](https://direnv.net/)
 - Clone this repo
 - Inside your cloned repo, run `direnv allow`
+
+or
+
+- Install [Node](https://nodejs.org/en/) and [ELm](https://elm-lang.org/)
+- Clone this repo
+- Inside the cloned repo, run `npm install`

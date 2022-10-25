@@ -31,7 +31,7 @@ module Ansi exposing
     , blink
     )
 
-{-| When building for the terminal we have 3 layers of abstraction. This package represents the bottom most layer. With the functions provided here you can manipulate each character within the terminal with minute control.
+{-| Most of the functions you'll need are in this module. If you want more fine grained control over font styling you'll want to use [Ansi.Font](./Ansi-Font)
 
 
 ## Erasing

@@ -13,7 +13,7 @@ module Ansi.Cursor exposing
     , show
     )
 
-{-|
+{-| Allows you to move the cursor around the screen
 
 
 ## Movement
