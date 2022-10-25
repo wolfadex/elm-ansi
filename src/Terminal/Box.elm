@@ -1,13 +1,29 @@
 module Terminal.Box exposing
-    ( single
+    ( Box
+    , single
     , double
-    , Box, bold, classic, custom, doubleSingle, draw, rounded, singleDouble
+    , bold
+    , classic
+    , custom
+    , doubleSingle
+    , draw
+    , rounded
+    , singleDouble
     )
 
 {-| Styles borrowed from <https://www.npmjs.com/package/cli-boxes>
 
+@docs Box
+
 @docs single
 @docs double
+@docs bold
+@docs classic
+@docs custom
+@docs doubleSingle
+@docs draw
+@docs rounded
+@docs singleDouble
 
 -}
 

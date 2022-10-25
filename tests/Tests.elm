@@ -1,4 +1,4 @@
-module Tests exposing (..)
+module Tests exposing (suite)
 
 import Ansi.Internal exposing (EastAsianCharWidth(..))
 import Expect

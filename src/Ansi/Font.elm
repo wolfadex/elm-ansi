@@ -68,7 +68,7 @@ import Ansi.Internal
 {-| -}
 color : Color -> String
 color c =
-    Ansi.Internal.toCommand (Ansi.Color.encode Foreground c)
+    Ansi.Internal.toCommand (Ansi.Color.encode Font c)
 
 
 {-| -}
@@ -83,7 +83,8 @@ bold =
     Ansi.Internal.toCommand "1m"
 
 
-{-| -}
+{-| The opposite of bold
+-}
 faint : String
 faint =
     Ansi.Internal.toCommand "2m"

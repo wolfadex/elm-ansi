@@ -35,8 +35,8 @@ import Ink.Internal exposing (Attribute(..))
 color : Color -> Attribute
 color c =
     Style
-        (Ansi.Color.encode Foreground c |> Ansi.Internal.toCommand)
-        (Ansi.Color.reset Foreground)
+        (Ansi.Color.encode Font c |> Ansi.Internal.toCommand)
+        (Ansi.Color.reset Font)
 
 
 {-| Set the color behind your text. See `Ansi.Color` for colors.

@@ -68,13 +68,15 @@ moveBackwardBy amount =
     Ansi.Internal.toCommand (String.fromInt amount ++ "D")
 
 
-{-| -}
+{-| Move the cursor forward N lines.
+-}
 moveForwardLines : Int -> String
 moveForwardLines amount =
     Ansi.Internal.toCommand (String.fromInt amount ++ "E")
 
 
-{-| -}
+{-| Move the cursor backward N lines.
+-}
 moveBackwardLines : Int -> String
 moveBackwardLines amount =
     Ansi.Internal.toCommand (String.fromInt amount ++ "F")

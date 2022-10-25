@@ -1,11 +1,9 @@
 module Ansi.Color exposing
     ( Color
-    , Depth(..)
     , Location(..)
     , black
     , blue
     , cyan
-    , decodeDepth
     , encode
     , fromHtmlColor
     , green
@@ -42,55 +40,45 @@ module Ansi.Color exposing
 
 import Ansi.Internal
 import Color as HtmlColor
-import Json.Decode exposing (Decoder)
 
 
 
+-- TODO: Currently only supports TrueColor.
 -- 1 for 2,
 -- 4 for 16,
 -- 8 for 256,
 -- 24 for 16,777,216 colors supported.
+-- {-|
+-- There is work to be able to convert between different color depths
+-- -}
+-- type Depth
+--     = NoColor
+--     | Colors16
+--     | Colors256
+--     | TrueColor
+-- {-| -}
+-- decodeDepth : Decoder Depth
+-- decodeDepth =
+--     Json.Decode.int
+--         |> Json.Decode.andThen
+--             (\d ->
+--                 case d of
+--                     1 ->
+--                         Json.Decode.succeed NoColor
+--                     4 ->
+--                         Json.Decode.succeed Colors16
+--                     8 ->
+--                         Json.Decode.succeed Colors256
+--                     24 ->
+--                         Json.Decode.succeed TrueColor
+--                     _ ->
+--                         Json.Decode.fail ("Unknown color support" ++ String.fromInt d)
+--             )
 
 
-{-| **TODO:** Currently only supports TrueColor.
-
-There is work to be able to convert between different color depths
-
--}
-type Depth
-    = NoColor
-    | Colors16
-    | Colors256
-    | TrueColor
-
-
-{-| -}
-decodeDepth : Decoder Depth
-decodeDepth =
-    Json.Decode.int
-        |> Json.Decode.andThen
-            (\d ->
-                case d of
-                    1 ->
-                        Json.Decode.succeed NoColor
-
-                    4 ->
-                        Json.Decode.succeed Colors16
-
-                    8 ->
-                        Json.Decode.succeed Colors256
-
-                    24 ->
-                        Json.Decode.succeed TrueColor
-
-                    _ ->
-                        Json.Decode.fail ("Unknown color support" ++ String.fromInt d)
-            )
-
-
-{-| -}
+{-| Whether the color is applied to the `Font` or the `Background` -}
 type Location
-    = Foreground
+    = Font
     | Background
 
 
@@ -154,7 +142,7 @@ encode location (Color col) =
 encodeLocation : Location -> Int
 encodeLocation loc =
     case loc of
-        Foreground ->
+        Font ->
             38
 
         Background ->
@@ -221,7 +209,7 @@ reset : Location -> String
 reset location =
     Ansi.Internal.toCommand
         ((case location of
-            Foreground ->
+            Font ->
                 "39"
 
             Background ->

@@ -1,4 +1,4 @@
-module List.Extra exposing (..)
+module List.Extra exposing (get)
 
 
 get : (a -> Maybe b) -> List a -> Maybe b

@@ -94,7 +94,7 @@ resetFont str =
 -}
 color : Color -> String -> String
 color c str =
-    Ansi.Font.color c ++ str ++ Ansi.Color.reset Foreground
+    Ansi.Font.color c ++ str ++ Ansi.Color.reset Font
 
 
 {-| Sets the color behind the text

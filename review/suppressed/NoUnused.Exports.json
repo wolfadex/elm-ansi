@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "automatically created by": "elm-review suppress",
+  "learn more": "elm-review suppress --help",
+  "suppressions": [
+    { "count": 9, "filePath": "src/Terminal/Box.elm" },
+    { "count": 1, "filePath": "src/Ansi/Internal.elm" },
+    { "count": 1, "filePath": "src/Ink.elm" },
+    { "count": 1, "filePath": "src/Ink/Border.elm" },
+    { "count": 1, "filePath": "src/Ink/Layout.elm" },
+    { "count": 1, "filePath": "src/Ink/Style.elm" },
+    { "count": 1, "filePath": "src/List/Extra.elm" }
+  ]
+}

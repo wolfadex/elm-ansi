@@ -1,4 +1,10 @@
-module Ansi.Internal exposing (..)
+module Ansi.Internal exposing
+    ( EastAsianCharWidth(..)
+    , commandStr
+    , eastAsianWidth
+    , toCommand
+    , toList
+    )
 
 import Bitwise
 import Regex
@@ -346,61 +352,53 @@ toList =
         )
 
 
-length : String -> Int
-length string =
-    List.foldl
-        (\char total ->
-            total + characterLength char
-        )
-        0
-        (toList string)
 
-
-slice : Int -> Int -> String -> String
-slice start end text =
-    let
-        textLen =
-            length text
-
-        start_ =
-            if start < 0 then
-                textLen + start
-
-            else
-                start
-
-        end_ =
-            if end < 0 then
-                textLen + end
-
-            else
-                end
-    in
-    List.foldl
-        (\char ( result, eawLen ) ->
-            let
-                charLen =
-                    length char
-            in
-            if
-                eawLen
-                    >= start_
-                    - (if charLen == 2 then
-                        1
-
-                       else
-                        0
-                      )
-            then
-                if eawLen + charLen <= end_ then
-                    ( result ++ char, eawLen )
-
-                else
-                    ( result, eawLen )
-
-            else
-                ( result, eawLen + charLen )
-        )
-        ( "", 0 )
-        (toList text)
-        |> Tuple.first
+-- length : String -> Int
+-- length string =
+--     List.foldl
+--         (\char total ->
+--             total + characterLength char
+--         )
+--         0
+--         (toList string)
+-- slice : Int -> Int -> String -> String
+-- slice start end text =
+--     let
+--         textLen =
+--             length text
+--         start_ =
+--             if start < 0 then
+--                 textLen + start
+--             else
+--                 start
+--         end_ =
+--             if end < 0 then
+--                 textLen + end
+--             else
+--                 end
+--     in
+--     List.foldl
+--         (\char ( result, eawLen ) ->
+--             let
+--                 charLen =
+--                     length char
+--             in
+--             if
+--                 eawLen
+--                     >= start_
+--                     - (if charLen == 2 then
+--                         1
+--                        else
+--                         0
+--                       )
+--             then
+--                 if eawLen + charLen <= end_ then
+--                     ( result ++ char, eawLen )
+--                 else
+--                     ( result, eawLen )
+--             else
+--                 ( result, eawLen + charLen )
+--         )
+--         ( "", 0 )
+--         (toList text)
+--         |> Tuple.first
