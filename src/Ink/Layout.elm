@@ -17,8 +17,8 @@ module Ink.Layout exposing
 
 -}
 
+import Ansi.Box exposing (Box)
 import Ink.Internal exposing (Attribute(..), Length(..))
-import Terminal.Box exposing (Box)
 
 
 {-| Add white space between the children of a container. For a column this adds a new line between children and for rows it adds a columns between them.
@@ -71,7 +71,7 @@ paddingEach sizes =
     Padding sizes
 
 
-{-| Draws the specified box around your content. See `Terminal.Box` for common patterns or for creating your own.
+{-| Draws the specified box around your content. See `Ansi.Box` for common patterns or for creating your own.
 
     -- Before
     Ink.text [] "Hello World"
@@ -81,7 +81,7 @@ Hello World
 ```
 
     -- After
-    Ink.text [ Ink.Layout.border Terminal.Box.single ] "Hello World"
+    Ink.text [ Ink.Layout.border Ansi.Box.single ] "Hello World"
 
 ```sh
 ┌───────────┐

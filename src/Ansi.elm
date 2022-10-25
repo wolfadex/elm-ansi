@@ -5,11 +5,19 @@ module Ansi exposing
     , clearLine
     , clearLineAfter
     , clearLineBefore
-    , backgroundColor
     , saveScreen
     , restoreScreen
     , scrollUpBy
     , scrollDownBy
+    , fontColor
+    , backgroundColor
+    , invert
+    , bold
+    , faint
+    , italic
+    , underline
+    , strikeThrough
+    , resetFont
     , regex
     , emojiRegex
     , Key
@@ -20,6 +28,7 @@ module Ansi exposing
     , isRightArrow
     , isUpArrow
     , setTitle
+    , blink
     )
 
 {-| When building for the terminal we have 3 layers of abstraction. This package represents the bottom most layer. With the functions provided here you can manipulate each character within the terminal with minute control.
@@ -35,17 +44,30 @@ module Ansi exposing
 @docs clearLineBefore
 
 
-## Styles
-
-@docs backgroundColor
-
-
 ## State
 
 @docs saveScreen
 @docs restoreScreen
 @docs scrollUpBy
 @docs scrollDownBy
+
+
+## Color
+
+@docs fontColor
+@docs backgroundColor
+@docs invert
+
+
+## Style
+
+@docs bold
+@docs faint
+@docs italic
+@docs underline
+@docs strikeThrough
+
+@docs resetFont
 
 
 ## Helpers
@@ -69,21 +91,22 @@ module Ansi exposing
 
 @docs setTitle
 
+
+## Unsupported
+
+These have some limited support but it varies greatly by terminal
+
+@docs blink
+
 -}
 
 -- Reference for many of the codes <https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797>
 
 import Ansi.Color exposing (Color, Location(..))
+import Ansi.Font
 import Ansi.Internal
 import Json.Decode exposing (Decoder)
 import Regex exposing (Regex)
-
-
-{-| All content after this will have the specified background color until either a new color is set or this is reset with `Ansi.Color.reset`.
--}
-backgroundColor : Color -> String
-backgroundColor c =
-    Ansi.Internal.toCommand (Ansi.Color.encode Background c)
 
 
 {-| Clears all of the screen
@@ -154,6 +177,80 @@ saveScreen =
 restoreScreen : String
 restoreScreen =
     Ansi.Internal.toCommand "?47l"
+
+
+
+---- CONVENIENCE FUNCTIONS ----
+
+
+{-| -}
+bold : String -> String
+bold str =
+    Ansi.Font.bold ++ str ++ Ansi.Font.resetBoldFaint
+
+
+{-| The opposite of bold
+-}
+faint : String -> String
+faint str =
+    Ansi.Font.faint ++ str ++ Ansi.Font.resetBoldFaint
+
+
+{-| -}
+italic : String -> String
+italic str =
+    Ansi.Font.italic ++ str ++ Ansi.Font.resetItalic
+
+
+{-| -}
+underline : String -> String
+underline str =
+    Ansi.Font.underline ++ str ++ Ansi.Font.resetUnderline
+
+
+{-| Swaps the font and background colors
+-}
+invert : String -> String
+invert str =
+    Ansi.Color.invert ++ str ++ Ansi.Color.resetInvert
+
+
+{-| -}
+strikeThrough : String -> String
+strikeThrough str =
+    Ansi.Font.strikeThrough ++ str ++ Ansi.Font.resetStrikeThrough
+
+
+{-| Resets all font settings on the passed in value
+-}
+resetFont : String -> String
+resetFont str =
+    Ansi.Font.resetAll ++ str
+
+
+{-| Sets the color of the text
+-}
+fontColor : Color -> String -> String
+fontColor c str =
+    Ansi.Color.set Font c ++ str ++ Ansi.Color.reset Font
+
+
+{-| Sets the color behind the text
+-}
+backgroundColor : Color -> String -> String
+backgroundColor c str =
+    Ansi.Color.set Background c ++ str ++ Ansi.Color.reset Background
+
+
+{-| Not supported by some terminals
+-}
+blink : String -> String
+blink str =
+    Ansi.Font.blink ++ str ++ Ansi.Font.resetBlink
+
+
+
+---- PARSING COMMANDS ----
 
 
 {-| If the input is an ansi command, return the command portion, with the escape code removed.
@@ -242,7 +339,7 @@ decodeKey =
         (Json.Decode.field "shift" Json.Decode.bool)
 
 
-{-| Matches regex characters
+{-| Matches ANSI characters
 
 Borrowed from <https://github.com/chalk/ansi-regex>
 

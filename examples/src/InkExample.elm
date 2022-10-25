@@ -7,7 +7,7 @@ import Ink.Border
 import Ink.Layout
 import Ink.Style
 import Json.Decode exposing (Value)
-import Terminal.Box
+import Ansi.Box
 
 
 main : Program Flags Model Msg
@@ -110,7 +110,7 @@ render model =
             Ansi.String.width (Ink.toString model.inkConfig title)
       in
       Ink.row
-        [ Ink.Layout.border Terminal.Box.single
+        [ Ink.Layout.border Ansi.Box.single
         , Ink.Border.color Ansi.Color.red
         ]
         [ Ink.text [] "🌈  "

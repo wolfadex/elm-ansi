@@ -26,7 +26,7 @@ import Ansi.Cursor
 import Ansi.Font
 import Ansi.String
 import Ink.Internal exposing (Attribute(..), Element(..), Length(..))
-import Terminal.Box exposing (Box)
+import Ansi.Box exposing (Box)
 
 
 {-| Much like [mdgriffith/elm-ui](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/), Ink is made up of a few core `Element`s. In this case you have Text and Containers, the 2nd of these hold 0 or more children and does a lot of the layout.

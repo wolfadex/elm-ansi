@@ -1,6 +1,6 @@
 module Ink.Internal exposing (Attribute(..), Element(..), Length(..))
 
-import Terminal.Box exposing (Box)
+import Ansi.Box exposing (Box)
 
 
 type Attribute

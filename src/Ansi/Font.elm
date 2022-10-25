@@ -1,8 +1,5 @@
 module Ansi.Font exposing
-    ( color
-    , invert
-    , resetInvert
-    , bold
+    ( bold
     , faint
     , resetBoldFaint
     , italic
@@ -19,13 +16,6 @@ module Ansi.Font exposing
     )
 
 {-| When styling your terminal there are 2 sets of commands, those that add the style and those that remove it. This does make this a little more difficult to use as you have to remember to reset each style when you no longer want it applied. It does however let you mix and match styles however you want.
-
-
-## Color
-
-@docs color
-@docs invert
-@docs resetInvert
 
 
 ## Style
@@ -61,14 +51,7 @@ These have some limited support but it varies greatly by terminal
 
 -}
 
-import Ansi.Color exposing (Color, Location(..))
 import Ansi.Internal
-
-
-{-| -}
-color : Color -> String
-color c =
-    Ansi.Internal.toCommand (Ansi.Color.encode Font c)
 
 
 {-| -}
@@ -130,18 +113,6 @@ blink =
 resetBlink : String
 resetBlink =
     Ansi.Internal.toCommand "25m"
-
-
-{-| -}
-invert : String
-invert =
-    Ansi.Internal.toCommand "7m"
-
-
-{-| -}
-resetInvert : String
-resetInvert =
-    Ansi.Internal.toCommand "27m"
 
 
 {-| -}

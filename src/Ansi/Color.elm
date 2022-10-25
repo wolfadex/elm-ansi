@@ -1,8 +1,10 @@
 module Ansi.Color exposing
     ( Color
     , Location(..)
-    , encode
+    , set
     , reset
+    , invert
+    , resetInvert
     , black
     , blue
     , cyan
@@ -21,8 +23,10 @@ module Ansi.Color exposing
 @docs Color
 @docs Location
 
-@docs encode
+@docs set
 @docs reset
+@docs invert
+@docs resetInvert
 
 
 ## Basics
@@ -142,14 +146,15 @@ type Color
         }
 
 
-{-| Encode the color to a `String` for printing to the terminal
+{-| Set the color for the text or background
 -}
-encode : Location -> Color -> String
-encode location (Color col) =
+set : Location -> Color -> String
+set location (Color col) =
     [ encodeLocation location, 2, col.red, col.green, col.blue ]
         |> List.map String.fromInt
         |> String.join ";"
         |> (\s -> s ++ "m")
+        |> Ansi.Internal.toCommand
 
 
 encodeLocation : Location -> Int
@@ -217,7 +222,8 @@ rgb opts =
     Color { red = opts.red, blue = opts.blue, green = opts.green }
 
 
-{-| -}
+{-| Reset to the terminal's default color
+-}
 reset : Location -> String
 reset location =
     Ansi.Internal.toCommand
@@ -230,3 +236,17 @@ reset location =
          )
             ++ "m"
         )
+
+
+{-| Flip the font and background colors
+-}
+invert : String
+invert =
+    Ansi.Internal.toCommand "7m"
+
+
+{-| Unflip the font and background colors
+-}
+resetInvert : String
+resetInvert =
+    Ansi.Internal.toCommand "27m"

@@ -1,4 +1,4 @@
-module Terminal.Box exposing
+module Ansi.Box exposing
     ( Box
     , single
     , double

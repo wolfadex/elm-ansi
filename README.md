@@ -24,16 +24,14 @@ if printed to a terminal would give you
 
 > Hello, **World**!
 
-This can be made slightly easier by using the `Terminal` functions
+This can be made slightly easier by using the `Ansi` helper functions
 
 ```elm
-import Terminal
+import Ansi
 
 phrase : String
 phrase =
-    "Hello, "
-        ++ Terminal.bold "world"
-        ++ "!
+    "Hello, " ++ Ansi.bold "world" ++ "!
 ```
 
 which if printed to a terminal would also give you
@@ -45,12 +43,10 @@ which if printed to a terminal would also give you
 To compile an example, run `npm run:<example name>`, e.g.
 
 - `npm run example:ansi`
-- `npm run example:terminal`
 
-To run a compiled example, run `node example-<example name>.js`, e.g.
+To run a compiled example, run `node example/dist-<example name>.js`, e.g.
 
-- Run `node dist/example-ansi.js` to view the Ansi demo
-- Run `node dist/example-terminal.js` to view the Terminal demo
+- Run `node example/dist/example-ansi.js` to view the Ansi demo
 
 ---
 

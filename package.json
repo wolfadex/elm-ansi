@@ -4,9 +4,8 @@
   "version": "0.1.0",
   "description": "",
   "scripts": {
-    "example:ansi": "nodemon --exec 'elm-esm make examples/AnsiExample.elm --output=dist/example-elm-ansi.js' --watch src --watch examples/src -e elm",
-    "example:terminal": "nodemon --exec 'elm-esm make examples/TerminalExample.elm --output=dist/example-elm-terminal.js' --watch src --watch examples/src -e elm",
-    "example:ink": "nodemon --exec 'elm-esm make examples/InkExample.elm --output=dist/example-elm-ink.js' --watch src --watch examples/src -e elm",
+    "example:ansi": "cd examples && nodemon --exec 'elm-esm make src/AnsiExample.elm --output=dist/example-elm-ansi.js' --watch ../src --watch src -e elm",
+    "example:ink": "cd examples && nodemon --exec 'elm-esm make src/InkExample.elm --output=dist/example-elm-ink.js' --watch ../src --watch src -e elm",
     "review": "elm-review --watch --fix"
   },
   "repository": {
