@@ -28,8 +28,8 @@ import Json.Decode exposing (Decoder)
 -}
 getCommand : String -> Maybe String
 getCommand str =
-    if String.startsWith Ansi.Internal.commandStr str then
-        Just (String.dropLeft (String.length Ansi.Internal.commandStr) str)
+    if String.startsWith Ansi.Internal.esc str then
+        Just (String.dropLeft (String.length Ansi.Internal.esc) str)
 
     else
         Nothing

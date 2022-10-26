@@ -85,7 +85,7 @@ toString : Config -> Element -> String
 toString config element =
     Ansi.Font.endAll
         ++ Ansi.Cursor.hide
-        ++ Ansi.clearScreen
+        ++ Ansi.eraseScreen
         ++ Ansi.Cursor.moveTo { row = 1, column = 1 }
         ++ viewHelper
             { column = 0

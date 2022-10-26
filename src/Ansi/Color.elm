@@ -165,7 +165,7 @@ start : Location -> Color -> String
 start location (Color col) =
     [ encodeLocation location, 2, col.red, col.green, col.blue ]
         |> List.map String.fromInt
-        |> String.join ";"
+        |> String.join Ansi.Internal.separator
         |> (\s -> s ++ "m")
         |> Ansi.Internal.toCommand
 

@@ -93,7 +93,7 @@ moveToColumn amount =
 -}
 moveTo : { row : Int, column : Int } -> String
 moveTo to =
-    Ansi.Internal.toCommand (String.fromInt to.row ++ ";" ++ String.fromInt to.column ++ "H")
+    Ansi.Internal.toCommand (String.fromInt to.row ++ Ansi.Internal.separator ++ String.fromInt to.column ++ "H")
 
 
 {-| Save the cursor's position

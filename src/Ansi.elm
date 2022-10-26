@@ -1,15 +1,18 @@
 module Ansi exposing
     ( clearScreen
-    , clearUp
-    , clearDown
-    , clearLine
-    , clearLineAfter
-    , clearLineBefore
+    , eraseScreen
+    , eraseUp
+    , eraseDown
+    , eraseLine
+    , eraseLineAfter
+    , eraseLineBefore
     , saveScreen
     , restoreScreen
     , scrollUpBy
     , scrollDownBy
     , setTitle
+    , link
+    , beep
     )
 
 {-|
@@ -18,11 +21,12 @@ module Ansi exposing
 ## Erasing
 
 @docs clearScreen
-@docs clearUp
-@docs clearDown
-@docs clearLine
-@docs clearLineAfter
-@docs clearLineBefore
+@docs eraseScreen
+@docs eraseUp
+@docs eraseDown
+@docs eraseLine
+@docs eraseLineAfter
+@docs eraseLineBefore
 
 
 ## State
@@ -36,6 +40,8 @@ module Ansi exposing
 ## Other
 
 @docs setTitle
+@docs link
+@docs beep
 
 -}
 
@@ -44,45 +50,52 @@ module Ansi exposing
 import Ansi.Internal
 
 
-{-| Clears all of the screen
+{-| Clears the entire screen
 -}
 clearScreen : String
 clearScreen =
+    "\u{001B}c"
+
+
+{-| Erases all of the screen
+-}
+eraseScreen : String
+eraseScreen =
     Ansi.Internal.toCommand "2J"
 
 
-{-| Clears the screen from the cursor up
+{-| Erases the screen from the cursor up
 -}
-clearUp : String
-clearUp =
+eraseUp : String
+eraseUp =
     Ansi.Internal.toCommand "1J"
 
 
-{-| Clears the screen from the cursor down
+{-| Erases the screen from the cursor down
 -}
-clearDown : String
-clearDown =
+eraseDown : String
+eraseDown =
     Ansi.Internal.toCommand "J"
 
 
-{-| Clears the line the cursor is on
+{-| Erases the line the cursor is on
 -}
-clearLine : String
-clearLine =
+eraseLine : String
+eraseLine =
     Ansi.Internal.toCommand "2K"
 
 
-{-| Clears the line from the cursor to the end
+{-| Erases the line from the cursor to the end
 -}
-clearLineAfter : String
-clearLineAfter =
+eraseLineAfter : String
+eraseLineAfter =
     Ansi.Internal.toCommand "K"
 
 
-{-| Clears the line from the beginning through the cursor
+{-| Erases the line from the beginning through the cursor
 -}
-clearLineBefore : String
-clearLineBefore =
+eraseLineBefore : String
+eraseLineBefore =
     Ansi.Internal.toCommand "1K"
 
 
@@ -100,15 +113,13 @@ scrollDownBy amount =
     Ansi.Internal.toCommand (String.fromInt amount ++ "M")
 
 
-{-| 
--}
+{-| -}
 saveScreen : String
 saveScreen =
     Ansi.Internal.toCommand "?47h"
 
 
-{-| 
--}
+{-| -}
 restoreScreen : String
 restoreScreen =
     Ansi.Internal.toCommand "?47l"
@@ -118,4 +129,31 @@ restoreScreen =
 -}
 setTitle : String -> String
 setTitle title =
-    "\u{001B}]0;" ++ title ++ "\u{0007}"
+    Ansi.Internal.bel ++ "0" ++ Ansi.Internal.separator ++ title ++ Ansi.Internal.bel
+
+
+{-| Similar formatting to Markdown URLs. Not all terminals support this format.
+-}
+link : { text : String, url : String } -> String
+link options =
+    String.concat
+        [ Ansi.Internal.osc
+        , "8"
+        , Ansi.Internal.separator
+        , Ansi.Internal.separator
+        , options.url
+        , Ansi.Internal.bel
+        , options.text
+        , Ansi.Internal.osc
+        , "8"
+        , Ansi.Internal.separator
+        , Ansi.Internal.separator
+        , Ansi.Internal.bel
+        ]
+
+
+{-| Emits an audio beep
+-}
+beep : String
+beep =
+    Ansi.Internal.bel

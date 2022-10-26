@@ -1,7 +1,10 @@
 module Ansi.Internal exposing
     ( EastAsianCharWidth(..)
-    , commandStr
+    , bel
     , eastAsianWidth
+    , esc
+    , osc
+    , separator
     , toCommand
     , toList
     )
@@ -12,12 +15,27 @@ import Regex
 
 toCommand : String -> String
 toCommand str =
-    commandStr ++ str
+    esc ++ str
 
 
-commandStr : String
-commandStr =
+esc : String
+esc =
     "\u{001B}["
+
+
+osc : String
+osc =
+    "\u{001B}]"
+
+
+bel : String
+bel =
+    "\u{0007}"
+
+
+separator : String
+separator =
+    ";"
 
 
 
