@@ -6,7 +6,9 @@ A low-level package for text formatting and layout for your terminal.
 
 This package is meant as a building block for more expressive packages. You can think of it like [elm/virtual-dom](https://package.elm-lang.org/packages/elm/virtual-dom/latest/) for [elm/html](https://package.elm-lang.org/packages/elm/html/latest/) and [mdgriffith/elm-ui](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/).
 
-## Basic Example
+## Examples
+
+### Hello World
 
 ```elm
 port module Main exposing (..)
@@ -52,7 +54,11 @@ Walking through this step-by-step:
 1. Now we can finally start drawing our content! We want to write out `"🌈 Hello, World!"`, but we also want to make `World` bold.
 1. Finally we join all of this together and send it out through a port!
 
+### Hello World++
+
 For more complete example including handling input, checkout the examples directory [in the repo](https://github.com/wolfadex/elm-ansi).
+
+### A simple game
 
 For a more production like example, check out [micro-dungeon](https://github.com/wolfadex/micro-dungeon).
 
