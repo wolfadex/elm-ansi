@@ -129,7 +129,7 @@ restoreScreen =
 -}
 setTitle : String -> String
 setTitle title =
-    Ansi.Internal.bel ++ "0" ++ Ansi.Internal.separator ++ title ++ Ansi.Internal.bel
+    Ansi.Internal.osc ++ "0" ++ Ansi.Internal.separator ++ title ++ Ansi.Internal.bel
 
 
 {-| Similar formatting to Markdown URLs. Not all terminals support this format.
