@@ -1,7 +1,7 @@
 {
   "type": "package",
   "name": "wolfadex/elm-ansi",
-  "summary": "Function and types to make it easy to work with ASNI codes",
+  "summary": "Functions and types to make it easy to work with ASNI codes and the terminal",
   "license": "BSD-3-Clause",
   "version": "1.0.0",
   "exposed-modules": [
