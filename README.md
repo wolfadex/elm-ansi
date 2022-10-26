@@ -54,6 +54,8 @@ Walking through this step-by-step:
 
 For more complete example including handling input, checkout the examples directory [in the repo](https://github.com/wolfadex/elm-ansi).
 
+For a more production like example, check out [micro-dungeon](https://github.com/wolfadex/micro-dungeon).
+
 ---
 
 ## Contributing
