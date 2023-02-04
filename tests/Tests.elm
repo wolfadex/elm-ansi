@@ -15,5 +15,6 @@ suite =
                 ]
                     |> List.map Ansi.Internal.eastAsianWidth
                     |> List.all ((==) (Just FullWidth))
-                    |> Expect.true "Non full width East Asian character"
+                    |> Expect.equal True
+                    |> Expect.onFail "Non full width East Asian character"
         ]

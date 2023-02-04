@@ -16,6 +16,7 @@ module Ansi.Font exposing
     , resetAll
     , hide
     , show
+    , blink
     , startBlink
     , endBlink
     )
@@ -68,6 +69,7 @@ which produces the same result.
 
 These have some limited support but it varies greatly by terminal
 
+@docs blink
 @docs startBlink
 @docs endBlink
 

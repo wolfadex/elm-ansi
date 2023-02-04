@@ -10,6 +10,14 @@ module Ansi.Color exposing
     , red
     , white
     , yellow
+    , brightBlack
+    , brightRed
+    , brightGreen
+    , brightYellow
+    , brightBlue
+    , brightMagenta
+    , brightCyan
+    , brightWhite
     , rgb
     , fromHtmlColor
     , toHtmlColor
@@ -41,6 +49,18 @@ module Ansi.Color exposing
 @docs red
 @docs white
 @docs yellow
+
+
+## Bright Colors
+
+@docs brightBlack
+@docs brightRed
+@docs brightGreen
+@docs brightYellow
+@docs brightBlue
+@docs brightMagenta
+@docs brightCyan
+@docs brightWhite
 
 
 ## Custom Color
@@ -120,7 +140,7 @@ fromHtmlColor c =
         parts =
             HtmlColor.toRgba c
     in
-    Color
+    Custom
         { red = floatToInt parts.red
         , green = floatToInt parts.green
         , blue = floatToInt parts.blue
@@ -135,7 +155,62 @@ floatToInt f =
 {-| Convert from an ANSI color to [avh4/elm-color](https://package.elm-lang.org/packages/avh4/elm-color/latest/)
 -}
 toHtmlColor : Color -> HtmlColor.Color
-toHtmlColor (Color c) =
+toHtmlColor color_ =
+    let
+        c : { red : Int, green : Int, blue : Int }
+        c =
+            case color_ of
+                Black ->
+                    { red = 0, green = 0, blue = 0 }
+
+                Red ->
+                    { red = 128, green = 0, blue = 0 }
+
+                Green ->
+                    { red = 0, green = 128, blue = 0 }
+
+                Yellow ->
+                    { red = 128, green = 128, blue = 0 }
+
+                Blue ->
+                    { red = 0, green = 0, blue = 128 }
+
+                Magenta ->
+                    { red = 128, green = 0, blue = 128 }
+
+                Cyan ->
+                    { red = 0, green = 128, blue = 128 }
+
+                White ->
+                    { red = 128, green = 128, blue = 128 }
+
+                BrightBlack ->
+                    { red = 0, green = 0, blue = 0 }
+
+                BrightRed ->
+                    { red = 255, green = 0, blue = 0 }
+
+                BrightGreen ->
+                    { red = 0, green = 255, blue = 0 }
+
+                BrightYellow ->
+                    { red = 255, green = 255, blue = 0 }
+
+                BrightBlue ->
+                    { red = 0, green = 0, blue = 255 }
+
+                BrightMagenta ->
+                    { red = 255, green = 0, blue = 255 }
+
+                BrightCyan ->
+                    { red = 0, green = 255, blue = 255 }
+
+                BrightWhite ->
+                    { red = 255, green = 255, blue = 255 }
+
+                Custom customColor_ ->
+                    customColor_
+    in
     HtmlColor.fromRgba
         { red = intToFloat c.red
         , green = intToFloat c.green
@@ -152,7 +227,23 @@ intToFloat i =
 
 {-| -}
 type Color
-    = Color
+    = Black
+    | Red
+    | Green
+    | Yellow
+    | Blue
+    | Magenta
+    | Cyan
+    | White
+    | BrightBlack
+    | BrightRed
+    | BrightGreen
+    | BrightYellow
+    | BrightBlue
+    | BrightMagenta
+    | BrightCyan
+    | BrightWhite
+    | Custom
         { red : Int
         , green : Int
         , blue : Int
@@ -162,8 +253,139 @@ type Color
 {-| Set the color for the following text or background
 -}
 start : Location -> Color -> String
-start location (Color col) =
-    [ encodeLocation location, 2, col.red, col.green, col.blue ]
+start location color_ =
+    (case color_ of
+        Black ->
+            case location of
+                Font ->
+                    [ 30 ]
+
+                Background ->
+                    [ 40 ]
+
+        Red ->
+            case location of
+                Font ->
+                    [ 31 ]
+
+                Background ->
+                    [ 41 ]
+
+        Green ->
+            case location of
+                Font ->
+                    [ 32 ]
+
+                Background ->
+                    [ 42 ]
+
+        Yellow ->
+            case location of
+                Font ->
+                    [ 33 ]
+
+                Background ->
+                    [ 43 ]
+
+        Blue ->
+            case location of
+                Font ->
+                    [ 34 ]
+
+                Background ->
+                    [ 44 ]
+
+        Magenta ->
+            case location of
+                Font ->
+                    [ 35 ]
+
+                Background ->
+                    [ 45 ]
+
+        Cyan ->
+            case location of
+                Font ->
+                    [ 36 ]
+
+                Background ->
+                    [ 46 ]
+
+        White ->
+            case location of
+                Font ->
+                    [ 37 ]
+
+                Background ->
+                    [ 47 ]
+
+        BrightBlack ->
+            case location of
+                Font ->
+                    [ 90 ]
+
+                Background ->
+                    [ 100 ]
+
+        BrightRed ->
+            case location of
+                Font ->
+                    [ 91 ]
+
+                Background ->
+                    [ 101 ]
+
+        BrightGreen ->
+            case location of
+                Font ->
+                    [ 92 ]
+
+                Background ->
+                    [ 102 ]
+
+        BrightYellow ->
+            case location of
+                Font ->
+                    [ 93 ]
+
+                Background ->
+                    [ 103 ]
+
+        BrightBlue ->
+            case location of
+                Font ->
+                    [ 94 ]
+
+                Background ->
+                    [ 104 ]
+
+        BrightMagenta ->
+            case location of
+                Font ->
+                    [ 95 ]
+
+                Background ->
+                    [ 105 ]
+
+        BrightCyan ->
+            case location of
+                Font ->
+                    [ 96 ]
+
+                Background ->
+                    [ 106 ]
+
+        BrightWhite ->
+            case location of
+                Font ->
+                    [ 97 ]
+
+                Background ->
+                    [ 107 ]
+
+        Custom customColor_ ->
+            [ encodeLocation location, 2, customColor_.red, customColor_.green, customColor_.blue ]
+    )
         |> List.map String.fromInt
         |> String.join Ansi.Internal.separator
         |> (\s -> s ++ "m")
@@ -183,56 +405,104 @@ encodeLocation loc =
 {-| -}
 black : Color
 black =
-    Color { red = 0, green = 0, blue = 0 }
+    Black
 
 
 {-| -}
 red : Color
 red =
-    Color { red = 255, green = 0, blue = 0 }
+    Red
 
 
 {-| -}
 green : Color
 green =
-    Color { red = 0, green = 255, blue = 0 }
+    Green
 
 
 {-| -}
 yellow : Color
 yellow =
-    Color { red = 255, green = 255, blue = 0 }
+    Yellow
 
 
 {-| -}
 blue : Color
 blue =
-    Color { red = 0, green = 0, blue = 255 }
+    Blue
 
 
 {-| -}
 magenta : Color
 magenta =
-    Color { red = 255, green = 0, blue = 255 }
+    Magenta
 
 
 {-| -}
 cyan : Color
 cyan =
-    Color { red = 0, green = 255, blue = 255 }
+    Cyan
 
 
 {-| -}
 white : Color
 white =
-    Color { red = 255, green = 255, blue = 255 }
+    White
+
+
+{-| -}
+brightBlack : Color
+brightBlack =
+    BrightBlack
+
+
+{-| -}
+brightRed : Color
+brightRed =
+    BrightRed
+
+
+{-| -}
+brightGreen : Color
+brightGreen =
+    BrightGreen
+
+
+{-| -}
+brightYellow : Color
+brightYellow =
+    BrightYellow
+
+
+{-| -}
+brightBlue : Color
+brightBlue =
+    BrightBlue
+
+
+{-| -}
+brightMagenta : Color
+brightMagenta =
+    BrightMagenta
+
+
+{-| -}
+brightCyan : Color
+brightCyan =
+    BrightCyan
+
+
+{-| -}
+brightWhite : Color
+brightWhite =
+    BrightWhite
 
 
 {-| Specify the amount of red, green, and blue in the range of 0 - 255
 -}
 rgb : { red : Int, green : Int, blue : Int } -> Color
 rgb opts =
-    Color { red = opts.red, blue = opts.blue, green = opts.green }
+    Custom { red = opts.red, blue = opts.blue, green = opts.green }
 
 
 {-| Reset to the terminal's default color
