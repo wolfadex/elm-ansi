@@ -124,7 +124,7 @@ import Color as HtmlColor
 --             )
 
 
-{-| Whether the color is applied to the `Font` or the `Background`
+{-| Whether the color is applied to the `Font` (foreground) or the `Background`
 -}
 type Location
     = Font
