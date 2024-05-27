@@ -6,11 +6,11 @@ module Ansi.Parser exposing
 {-| For parsing ANSI codes into a custom type.
 Useful for turning ANSI text into another format such as HTML.
 
+Borrowed from [vito/elm-ansi](https://github.com/vito/elm-ansi/blob/05f89150e8bce99ae863cccda83e636564a64561/src/Ansi.elm) and then modified to fit the rest of this package.
+
 @docs parse, parseInto
 
 @docs Command, EraseMode
-
-Borrow from [vito/elm-ansi](https://github.com/vito/elm-ansi/blob/05f89150e8bce99ae863cccda83e636564a64561/src/Ansi.elm) and then modified to fit the rest of this package.
 
 -}
 

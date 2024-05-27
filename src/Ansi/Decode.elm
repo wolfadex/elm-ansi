@@ -1,4 +1,4 @@
-module Ansi.Parse exposing
+module Ansi.Decode exposing
     ( Key
     , decodeKey
     , getCommand
