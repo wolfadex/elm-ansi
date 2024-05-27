@@ -6,7 +6,8 @@
   "scripts": {
     "example:ansi": "cd examples && nodemon --exec 'elm-esm make src/AnsiExample.elm --output=dist/example-elm-ansi.js' --watch ../src --watch src -e elm",
     "example:ink": "cd examples && nodemon --exec 'elm-esm make src/InkExample.elm --output=dist/example-elm-ink.js' --watch ../src --watch src -e elm",
-    "review": "elm-review --watch --fix"
+    "review": "elm-review --watch --fix",
+    "test": "elm-test"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,10 @@
     "elm-doc-preview": "^5.0.5",
     "elm-esm": "^1.1.4",
     "elm-review": "^2.9.1",
+    "elm-test": "^0.19.1-revision12",
     "nodemon": "^2.0.20"
+  },
+  "volta": {
+    "node": "20.13.1"
   }
 }

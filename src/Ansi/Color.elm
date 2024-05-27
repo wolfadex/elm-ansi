@@ -21,7 +21,7 @@ module Ansi.Color exposing
     , rgb
     , fromHtmlColor
     , toHtmlColor
-    , Color
+    , Color(..)
     , Location(..)
     , start
     , end
@@ -90,40 +90,6 @@ import Ansi.Internal
 import Color as HtmlColor
 
 
-
--- TODO: Currently only supports TrueColor.
--- 1 for 2,
--- 4 for 16,
--- 8 for 256,
--- 24 for 16,777,216 colors supported.
--- {-|
--- There is work to be able to convert between different color depths
--- -}
--- type Depth
---     = NoColor
---     | Colors16
---     | Colors256
---     | TrueColor
--- {-| -}
--- decodeDepth : Decoder Depth
--- decodeDepth =
---     Json.Decode.int
---         |> Json.Decode.andThen
---             (\d ->
---                 case d of
---                     1 ->
---                         Json.Decode.succeed NoColor
---                     4 ->
---                         Json.Decode.succeed Colors16
---                     8 ->
---                         Json.Decode.succeed Colors256
---                     24 ->
---                         Json.Decode.succeed TrueColor
---                     _ ->
---                         Json.Decode.fail ("Unknown color support" ++ String.fromInt d)
---             )
-
-
 {-| Whether the color is applied to the `Font` (foreground) or the `Background`
 -}
 type Location
@@ -140,7 +106,7 @@ fromHtmlColor c =
         parts =
             HtmlColor.toRgba c
     in
-    Custom
+    CustomTrueColor
         { red = floatToInt parts.red
         , green = floatToInt parts.green
         , blue = floatToInt parts.blue
@@ -208,7 +174,45 @@ toHtmlColor color_ =
                 BrightWhite ->
                     { red = 255, green = 255, blue = 255 }
 
-                Custom customColor_ ->
+                Custom256 { color } ->
+                    if color >= 16 && color < 232 then
+                        let
+                            c_ =
+                                color - 16
+
+                            b =
+                                modBy 6 c_
+
+                            g =
+                                modBy 6 (c_ // 6)
+
+                            r =
+                                modBy 6 ((c_ // 6) // 6)
+
+                            -- Scales [0,5] -> [0,255] (not uniformly)
+                            -- 0     1     2     3     4     5
+                            -- 0    95   135   175   215   255
+                            scale n =
+                                if n == 0 then
+                                    0
+
+                                else
+                                    55 + n * 40
+                        in
+                        { red = scale r, green = scale g, blue = scale b }
+
+                    else if color >= 232 && color < 256 then
+                        let
+                            -- scales [232,255] -> [8,238]
+                            c_ =
+                                (color - 232) * 10 + 8
+                        in
+                        { red = c_, green = c_, blue = c_ }
+
+                    else
+                        { red = 0, green = 0, blue = 0 }
+
+                CustomTrueColor customColor_ ->
                     customColor_
     in
     HtmlColor.fromRgba
@@ -243,7 +247,11 @@ type Color
     | BrightMagenta
     | BrightCyan
     | BrightWhite
-    | Custom
+    | Custom256
+        -- A number ranging from 16 through 255
+        { color : Int
+        }
+    | CustomTrueColor
         { red : Int
         , green : Int
         , blue : Int
@@ -383,7 +391,15 @@ start location color_ =
                 Background ->
                     [ 107 ]
 
-        Custom customColor_ ->
+        Custom256 { color } ->
+            case location of
+                Font ->
+                    [ encodeLocation location, 5, color ]
+
+                Background ->
+                    [ encodeLocation location, 5, color ]
+
+        CustomTrueColor customColor_ ->
             [ encodeLocation location, 2, customColor_.red, customColor_.green, customColor_.blue ]
     )
         |> List.map String.fromInt
@@ -502,7 +518,7 @@ brightWhite =
 -}
 rgb : { red : Int, green : Int, blue : Int } -> Color
 rgb opts =
-    Custom { red = opts.red, blue = opts.blue, green = opts.green }
+    CustomTrueColor { red = opts.red, blue = opts.blue, green = opts.green }
 
 
 {-| Reset to the terminal's default color
