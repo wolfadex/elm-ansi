@@ -10,6 +10,8 @@ Useful for turning ANSI text into another format such as HTML.
 
 @docs Command, EraseMode
 
+Borrow from [vito/elm-ansi](https://github.com/vito/elm-ansi/blob/05f89150e8bce99ae863cccda83e636564a64561/src/Ansi.elm) and then modified to fit the rest of this package.
+
 -}
 
 import Ansi.Color exposing (Color(..))
@@ -19,10 +21,10 @@ import String
 {-| The events relevant to interpreting the stream.
 
   - `Text` is a chunk of text which should be interpreted with the style implied
-    by the preceding actions (i.e. `[SetBold True, Text "foo"]`) should yield a
+    by the preceding commands (i.e. `[SetBold True, Text "foo"]`) should yield a
     bold `foo`
   - `Remainder` is a partial ANSI escape sequence, returned at the end of the
-    actions if it was cut off. The next string passed to `parse` should have this
+    commands if it was cut off. The next string passed to `parse` should have this
     prepended to it.
   - The rest are derived from their respective ANSI escape sequences.
 
@@ -78,10 +80,10 @@ emptyParser =
     Parser (Unescaped "")
 
 
-{-| Convert an arbitrary String of text into a sequence of actions.
+{-| Convert an arbitrary String of text into a sequence of commands.
 
 If the input string ends with a partial ANSI escape sequence, it will be
-yielded as a `Remainder` action, which should then be prepended to the next
+yielded as a `Remainder` command, which should then be prepended to the next
 call to `parse`.
 
 -}
@@ -90,7 +92,7 @@ parse =
     List.reverse << parseInto [] (::)
 
 
-{-| Update a structure with actions parsed out of the given string.
+{-| Update a structure with commands parsed out of the given string.
 -}
 parseInto : a -> (Command -> a -> a) -> String -> a
 parseInto model update ansi =
@@ -192,38 +194,6 @@ colorCode code =
                 Nothing
 
 
-
--- if code >= 16 && code < 232 then
---     let
---         c =
---             code - 16
---         b =
---             modBy 6 c
---         g =
---             modBy 6 (c // 6)
---         r =
---             modBy 6 ((c // 6) // 6)
---         -- Scales [0,5] -> [0,255] (not uniformly)
---         -- 0     1     2     3     4     5
---         -- 0    95   135   175   215   255
---         scale n =
---             if n == 0 then
---                 0
---             else
---                 55 + n * 40
---     in
---     Just <| Custom { red = scale r, green = scale g, blue = scale b }
--- else if code >= 232 && code < 256 then
---     let
---         -- scales [232,255] -> [8,238]
---         c =
---             (code - 232) * 10 + 8
---     in
---     Just <| Custom { red = c, green = c, blue = c }
--- else
---     Nothing
-
-
 {-| Capture SGR arguments in pattern match
 -}
 captureArguments : List Int -> List Command
@@ -250,7 +220,7 @@ captureArguments list =
             SetBackground (Just <| CustomTrueColor { red = c r, green = c g, blue = c b }) :: captureArguments xs
 
         n :: xs ->
-            codeActions n ++ captureArguments xs
+            codeCommandss n ++ captureArguments xs
 
         [] ->
             []
@@ -365,8 +335,8 @@ completeUnescaped parser =
 
 
 completeBracketed : Parser a -> List Command -> Parser a
-completeBracketed (Parser _ model update) actions =
-    Parser (Unescaped "") (List.foldl update model actions) update
+completeBracketed (Parser _ model update) commands =
+    Parser (Unescaped "") (List.foldl update model commands) update
 
 
 cursorPosition : List (Maybe Int) -> List Command
@@ -404,8 +374,8 @@ eraseMode code =
             EraseAll
 
 
-codeActions : Int -> List Command
-codeActions code =
+codeCommandss : Int -> List Command
+codeCommandss code =
     case code of
         0 ->
             reset

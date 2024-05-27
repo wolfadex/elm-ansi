@@ -175,7 +175,42 @@ toHtmlColor color_ =
                     { red = 255, green = 255, blue = 255 }
 
                 Custom256 { color } ->
-                    Debug.todo ""
+                    if color >= 16 && color < 232 then
+                        let
+                            c_ =
+                                color - 16
+
+                            b =
+                                modBy 6 c_
+
+                            g =
+                                modBy 6 (c_ // 6)
+
+                            r =
+                                modBy 6 ((c_ // 6) // 6)
+
+                            -- Scales [0,5] -> [0,255] (not uniformly)
+                            -- 0     1     2     3     4     5
+                            -- 0    95   135   175   215   255
+                            scale n =
+                                if n == 0 then
+                                    0
+
+                                else
+                                    55 + n * 40
+                        in
+                        { red = scale r, green = scale g, blue = scale b }
+
+                    else if color >= 232 && color < 256 then
+                        let
+                            -- scales [232,255] -> [8,238]
+                            c_ =
+                                (color - 232) * 10 + 8
+                        in
+                        { red = c_, green = c_, blue = c_ }
+
+                    else
+                        { red = 0, green = 0, blue = 0 }
 
                 CustomTrueColor customColor_ ->
                     customColor_
