@@ -1,6 +1,9 @@
 module Tests exposing (suite)
 
+import Ansi.Color
+import Ansi.Font
 import Ansi.Internal exposing (EastAsianCharWidth(..))
+import Ansi.Parser
 import Expect
 import Test exposing (..)
 

@@ -5,6 +5,7 @@ module Ansi.Font exposing
     , underline
     , strikeThrough
     , startBold
+    , endBold
     , startFaint
     , endBoldFaint
     , startItalic
@@ -16,8 +17,8 @@ module Ansi.Font exposing
     , resetAll
     , hide
     , show
-    , blink
-    , startBlink
+    , blink, fastBlink
+    , startBlink, startFastBlink
     , endBlink
     )
 
@@ -44,6 +45,7 @@ which produces the same result.
 ## Explicit Styling
 
 @docs startBold
+@docs endBold
 @docs startFaint
 @docs endBoldFaint
 
@@ -69,8 +71,8 @@ which produces the same result.
 
 These have some limited support but it varies greatly by terminal
 
-@docs blink
-@docs startBlink
+@docs blink, fastBlink
+@docs startBlink, startFastBlink
 @docs endBlink
 
 -}
@@ -88,6 +90,13 @@ resetAll =
 startBold : String
 startBold =
     Ansi.Internal.toCommand "1m"
+
+
+{-| Double-underline [per ECMA-48](https://www.ecma-international.org/wp-content/uploads/ECMA-48_5th_edition_june_1991.pdf), but instead disables bold intensity on several terminals, including in the [Linux kernel's console before version 4.17](https://man7.org/linux/man-pages/man4/console_codes.4.html).
+-}
+endBold : String
+endBold =
+    Ansi.Internal.toCommand "21m"
 
 
 {-| The opposite of bold
@@ -131,6 +140,12 @@ endUnderline =
 startBlink : String
 startBlink =
     Ansi.Internal.toCommand "5m"
+
+
+{-| -}
+startFastBlink : String
+startFastBlink =
+    Ansi.Internal.toCommand "6m"
 
 
 {-| -}
@@ -203,3 +218,10 @@ strikeThrough str =
 blink : String -> String
 blink str =
     startBlink ++ str ++ endBlink
+
+
+{-| Not supported by some terminals
+-}
+fastBlink : String -> String
+fastBlink str =
+    startFastBlink ++ str ++ endBlink
