@@ -1,5 +1,6 @@
 port module InkExample exposing (main)
 
+import Ansi.Box
 import Ansi.Color exposing (Location(..))
 import Ansi.String
 import Ink exposing (Element)
@@ -7,7 +8,6 @@ import Ink.Border
 import Ink.Layout
 import Ink.Style
 import Json.Decode exposing (Value)
-import Ansi.Box
 
 
 main : Program Flags Model Msg
@@ -25,8 +25,7 @@ type alias Model =
 
 
 type alias Flags =
-    { colorDepth : Value
-    , columns : Int
+    { columns : Int
     , rows : Int
     }
 
@@ -35,10 +34,7 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     render
         { inkConfig =
-            { colorDepth =
-                Json.Decode.decodeValue Ansi.Color.decodeDepth flags.colorDepth
-                    |> Result.withDefault Ansi.Color.TrueColor
-            , columns = flags.columns
+            { columns = flags.columns
             , rows = flags.rows
             }
         }

@@ -22,7 +22,7 @@ module Ink exposing
 
 import Ansi
 import Ansi.Box exposing (Box)
-import Ansi.Color exposing (Depth(..))
+import Ansi.Color
 import Ansi.Cursor
 import Ansi.Font
 import Ansi.String
@@ -73,8 +73,7 @@ lineVertical =
 
 
 type alias Config =
-    { colorDepth : Depth
-    , rows : Int
+    { rows : Int
     , columns : Int
     }
 
@@ -83,7 +82,7 @@ type alias Config =
 -}
 toString : Config -> Element -> String
 toString config element =
-    Ansi.Font.endAll
+    Ansi.Font.resetAll
         ++ Ansi.Cursor.hide
         ++ Ansi.eraseScreen
         ++ Ansi.Cursor.moveTo { row = 1, column = 1 }

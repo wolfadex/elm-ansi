@@ -23,7 +23,7 @@ import Ink.Internal exposing (Attribute(..))
 color : Color -> Attribute
 color c =
     BorderFontStyle
-        (Ansi.Color.encode Font c |> Ansi.Internal.toCommand)
+        (Ansi.Color.start Font c |> Ansi.Internal.toCommand)
         (Ansi.Color.end Font)
 
 
@@ -32,5 +32,5 @@ color c =
 backgroundColor : Color -> Attribute
 backgroundColor c =
     BorderFontStyle
-        (Ansi.Color.encode Font c |> Ansi.Internal.toCommand)
+        (Ansi.Color.start Font c |> Ansi.Internal.toCommand)
         (Ansi.Color.end Font)
