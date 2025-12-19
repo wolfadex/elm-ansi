@@ -3,7 +3,7 @@
     "name": "wolfadex/elm-ansi",
     "summary": "Functions and types to make it easy to work with ANSI codes and the terminal",
     "license": "BSD-3-Clause",
-    "version": "3.0.0",
+    "version": "3.0.1",
     "exposed-modules": [
         "Ansi.Color",
         "Ansi.Font",
